@@ -1,0 +1,1 @@
+web: gunicorn TANA_code:app

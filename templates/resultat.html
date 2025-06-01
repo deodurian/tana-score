@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>  
+  
+  <meta charset="UTF-8">                        
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tana Score</title>                 
+  <!-- Lien vers une feuille de styles externe -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Favicon (petite icône dans l’onglet) -->
+  <link rel="icon" sizes="16x16" type="image/png" href="{{ url_for('static', filename='img/t(1).png') }}">
+  <link rel="icon" sizes="32x32" type="image/png" href="{{ url_for('static', filename='img/t(1).png') }}">
+
+</head>
+<body>
+  <div class="resultat-container">
+    <h1>Voici ton résultat</h1>
+
+    {% if T is not none %}
+      <p><strong>Score brut :</strong> {{ T }}</p>
+    {% else %}
+      <p>Aucun score n’a été calculé.</p>
+    {% endif %}
+
+    {% if pourcentage is not none %}
+      <p><strong>Pourcentage normalisé :</strong> {{ pourcentage }} %</p>
+    {% endif %}
+
+    <a href="/">↩ Revenir au formulaire</a>
+  </div>
+</body>
+</html>
