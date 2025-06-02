@@ -195,8 +195,7 @@ def calculer_T(donnees):
     
     if bz == "o":
             T *= 1.7
-    if T<0: 
-        T=0
+    
 
     def sigmoid_percent(T, x0=70, k=0.009):
         return round(100 / (1 + exp(-k * (T - x0))))
