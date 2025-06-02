@@ -27,6 +27,6 @@ def enregistrer_dans_google_sheet(donnees):
     donnees.get("trompe", "non"),
     donnees.get("plaisir", "non"),
     donnees.get("refaire", "non"),
-    donnees.get("T", 0)
+    donnees.get("T")
     ])
     
