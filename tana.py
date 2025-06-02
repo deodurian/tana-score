@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import json
 import os
 from TANA_code import calculer_T
+from google_sheets_utils import enregistrer_dans_google_sheet
 
 app = Flask(__name__)
 app.secret_key = 'clé secrete'
@@ -56,6 +57,7 @@ def submit():
 
     # Sinon, on calcule le score et affiche le résultat
     save_data(dict(form))
+    enregistrer_dans_google_sheet(dict(form))
     # 'compute_t_score' retourne (score_brut, pourcentage_sigmoide)
     t_score, pourcentage = calculer_T(dict(form))
     return render_template('resultat.html', T=t_score, pourcentage=pourcentage)

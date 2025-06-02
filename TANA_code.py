@@ -1,4 +1,5 @@
 from math import *
+from google_sheets_utils import enregistrer_dans_google_sheet
 
 def calculer_T(donnees):
     sexe = donnees["sexe"]
