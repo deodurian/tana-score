@@ -116,7 +116,7 @@ def calculer_T(donnees):
     if chien == "c":
         T += (ratio + bodyc + ex + date) * 3
     elif chien == "b" and (age - premier + 1) > 0 and bodyc / (age - premier + 1) > 1.2:
-        T += bodyc ** n
+        T += bodyc * n
     elif chien == "b":
         T -= exp(-1.3)
 
