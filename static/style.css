@@ -160,11 +160,8 @@ body {
 
 
 /* Groupes de boutons radio à la place des menus déroulants */
-.radio-group {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin: 10px 0 20px;
+.radio-group input[type="radio"] {
+  display: none;
 }
 
 .radio-group label {
@@ -178,29 +175,24 @@ body {
   transition: background-color 0.3s;
 }
 
-.radio-group input[type="radio"] {
-  display: none;
-}
-
 .radio-group input[type="radio"]:checked + label {
   background-color: #ff69b4;
   color: white;
 }
 
-/* Boutons Envoyer plus gros et roses pour les champs ouverts */
-input[type="submit"].open-field {
+button.open-field, input[type="submit"].open-field {
   background-color: #ff69b4 !important;
-  font-size: 1.3rem;
-  padding: 15px 30px;
+  font-size: 1.4rem;
+  padding: 18px 38px;
   font-weight: 700;
-  border-radius: 10px;
+  border-radius: 16px;
   border: none;
   cursor: pointer;
   color: white;
   transition: background-color 0.25s;
 }
 
-input[type="submit"].open-field:hover {
+button.open-field:hover, input[type="submit"].open-field:hover {
   background-color: #ff4da6 !important;
 }
 
@@ -213,22 +205,6 @@ form#tanaForm {
   text-align: center;
 }
 
-/* Style pour les boutons Suivant / Envoyer */
-button.open-field {
-  background-color: #ff69b4 !important;
-  font-size: 1.4rem;
-  padding: 18px 38px;
-  font-weight: 700;
-  border-radius: 16px;
-  border: none;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.25s;
-}
-
-button.open-field:hover {
-  background-color: #ff4da6 !important;
-}
 /* Classe utilitaire pour masquer les éléments */
 .hidden {
   display: none !important;

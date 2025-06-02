@@ -30,8 +30,10 @@
     <div class="content-question">
       <label>Tu es un :</label>
       <div class="radio-group">
-        <label><input type="radio" name="sexe" value="h" required> Homme</label>
-        <label><input type="radio" name="sexe" value="f"> Femme</label>
+        <input type="radio" id="sexe_h" name="sexe" value="h" required>
+        <label for="sexe_h">Homme</label>
+        <input type="radio" id="sexe_f" name="sexe" value="f">
+        <label for="sexe_f">Femme</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(0)">Suivant</button>
@@ -105,8 +107,10 @@
     <div class="content-question">
       <label>Tu préfères :</label>
       <div class="radio-group">
-        <label><input type="radio" name="chien" value="c" required> Chiens / Chiennes</label>
-        <label><input type="radio" name="chien" value="b"> Meufs / Gars bien</label>
+        <input type="radio" id="chien_c" name="chien" value="c" required>
+        <label for="chien_c">Chiens / Chiennes</label>
+        <input type="radio" id="chien_b" name="chien" value="b">
+        <label for="chien_b">Meufs / Gars bien</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(9)">Suivant</button>
@@ -116,8 +120,10 @@
     <div class="content-question">
       <label>Tu as plus d'ami·es :</label>
       <div class="radio-group">
-        <label><input type="radio" name="ami" value="f" required> Filles</label>
-        <label><input type="radio" name="ami" value="g"> Garçons</label>
+        <input type="radio" id="ami_f" name="ami" value="f" required>
+        <label for="ami_f">Filles</label>
+        <input type="radio" id="ami_g" name="ami" value="g">
+        <label for="ami_g">Garçons</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(10)">Suivant</button>
@@ -127,8 +133,10 @@
     <div class="content-question">
       <label>Serais-tu prêt·e à baisser tes standards pour baiser ?</label>
       <div class="radio-group">
-        <label><input type="radio" name="bz" value="o" required> Oui</label>
-        <label><input type="radio" name="bz" value="n"> Non</label>
+        <input type="radio" id="bz_o" name="bz" value="o" required>
+        <label for="bz_o">Oui</label>
+        <input type="radio" id="bz_n" name="bz" value="n">
+        <label for="bz_n">Non</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(11)">Suivant</button>
@@ -138,8 +146,10 @@
     <div class="content-question">
       <label>As-tu déjà trompé ?</label>
       <div class="radio-group">
-        <label><input type="radio" name="trompe" value="oui" required> Oui</label>
-        <label><input type="radio" name="trompe" value="non"> Non</label>
+        <input type="radio" id="trompe_oui" name="trompe" value="oui" required>
+        <label for="trompe_oui">Oui</label>
+        <input type="radio" id="trompe_non" name="trompe" value="non">
+        <label for="trompe_non">Non</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(12)">Suivant</button>
@@ -149,8 +159,10 @@
     <div class="content-question">
       <label>En as-tu tiré du plaisir ?</label>
       <div class="radio-group">
-        <label><input type="radio" name="plaisir" value="oui" required> Oui</label>
-        <label><input type="radio" name="plaisir" value="non"> Non</label>
+        <input type="radio" id="plaisir_oui" name="plaisir" value="oui" required>
+        <label for="plaisir_oui">Oui</label>
+        <input type="radio" id="plaisir_non" name="plaisir" value="non">
+        <label for="plaisir_non">Non</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(13)">Suivant</button>
@@ -160,8 +172,10 @@
     <div class="content-question">
       <label>Si c'était à refaire, le referais-tu ?</label>
       <div class="radio-group">
-        <label><input type="radio" name="refaire" value="oui" required> Oui</label>
-        <label><input type="radio" name="refaire" value="non"> Non</label>
+        <input type="radio" id="refaire_oui" name="refaire" value="oui" required>
+        <label for="refaire_oui">Oui</label>
+        <input type="radio" id="refaire_non" name="refaire" value="non">
+        <label for="refaire_non">Non</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(14)">Suivant</button>
@@ -171,10 +185,14 @@
     <div class="content-question">
       <label>Aimes-tu te maquiller ?</label>
       <div class="radio-group">
-        <label><input type="radio" name="maquillage" value="full"> Full face</label>
-        <label><input type="radio" name="maquillage" value="fond"> Juste fond de teint</label>
-        <label><input type="radio" name="maquillage" value="eye"> Eyeliner</label>
-        <label><input type="radio" name="maquillage" value="creme"> Juste crème solaire</label>
+        <input type="radio" id="maquillage_full" name="maquillage" value="full">
+        <label for="maquillage_full">Full face</label>
+        <input type="radio" id="maquillage_fond" name="maquillage" value="fond">
+        <label for="maquillage_fond">Juste fond de teint</label>
+        <input type="radio" id="maquillage_eye" name="maquillage" value="eye">
+        <label for="maquillage_eye">Eyeliner</label>
+        <input type="radio" id="maquillage_creme" name="maquillage" value="creme">
+        <label for="maquillage_creme">Juste crème solaire</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(15)">Suivant</button>
@@ -184,10 +202,14 @@
     <div class="content-question">
       <label>Pourrais-tu laisser tes potes pour avoir une relation ?</label>
       <div class="radio-group">
-        <label><input type="radio" name="laisser_potes" value="oui_bien"> Oui bien sûr</label>
-        <label><input type="radio" name="laisser_potes" value="depend"> Oui ça dépend</label>
-        <label><input type="radio" name="laisser_potes" value="peut_etre"> Peut-être</label>
-        <label><input type="radio" name="laisser_potes" value="non_potes_dabord"> Non pas du tout</label>
+        <input type="radio" id="laisser_potes_oui_bien" name="laisser_potes" value="oui_bien">
+        <label for="laisser_potes_oui_bien">Oui bien sûr</label>
+        <input type="radio" id="laisser_potes_depend" name="laisser_potes" value="depend">
+        <label for="laisser_potes_depend">Oui ça dépend</label>
+        <input type="radio" id="laisser_potes_peut_etre" name="laisser_potes" value="peut_etre">
+        <label for="laisser_potes_peut_etre">Peut-être</label>
+        <input type="radio" id="laisser_potes_non_potes_dabord" name="laisser_potes" value="non_potes_dabord">
+        <label for="laisser_potes_non_potes_dabord">Non pas du tout</label>
       </div>
     </div>
     <button type="button" class="open-field" onclick="checkAnswerAndNext(16)">Suivant</button>
@@ -205,8 +227,10 @@
     <div class="content-question">
       <label>As-tu déjà pensé à faire quelque chose avec ton demi-frère ou demi-sœur sans lien de parenté ?</label>
       <div class="radio-group">
-        <label><input type="radio" name="demi_famille" value="oui" required> Oui</label>
-        <label><input type="radio" name="demi_famille" value="non"> Non</label>
+        <input type="radio" id="demi_famille_oui" name="demi_famille" value="oui" required>
+        <label for="demi_famille_oui">Oui</label>
+        <input type="radio" id="demi_famille_non" name="demi_famille" value="non">
+        <label for="demi_famille_non">Non</label>
       </div>
     </div>
     <button type="submit" class="open-field">Envoyer</button>
