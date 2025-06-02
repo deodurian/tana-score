@@ -17,15 +17,16 @@ def enregistrer_dans_google_sheet(donnees):
 
     # Ajoute une ligne avec les données (adapter l'ordre si besoin)
     sheet.append_row([
-        donnees["sexe"],
-        donnees["age"],
-        donnees["ex"],
-        donnees["bodycount"],
-        donnees["instagram"],
-        donnees["abonnes"],
-        donnees["premier"],
-        donnees.get("trompe", "non"),
-        donnees.get("plaisir", "non"),
-        donnees.get("refaire", "non"),
-        donnees["T"]
+    donnees.get("sexe", ""),
+    donnees.get("age", ""),
+    donnees.get("ex", ""),
+    donnees.get("bodycount", ""),
+    donnees.get("instagram", ""),
+    donnees.get("abonnes", ""),
+    donnees.get("premier", ""),
+    donnees.get("trompe", "non"),
+    donnees.get("plaisir", "non"),
+    donnees.get("refaire", "non"),
+    donnees.get("T", 0)
     ])
+    
