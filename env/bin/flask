@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/Users/dorian/Downloads/Code site/env/bin/python3" "$0" "$@"
-' '''
+#!/Users/dorian/Downloads/code_site/env/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
