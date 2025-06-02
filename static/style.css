@@ -1,4 +1,4 @@
-/* Style spécifique pour chaque question */
+ * Style spécifique pour chaque question * /
 .question {
   display: flex;
   flex-direction: column;
@@ -167,7 +167,7 @@ body {
 .radio-group label {
   cursor: pointer;
   background-color: #2c2c2c;
-  padding: 10px 20px; /* réduit padding horizontal */
+  padding: 15px 30px; /* padding plus large */
   border-radius: 10px;
   color: white;
   font-weight: 600;
@@ -176,8 +176,9 @@ body {
   display: inline-block; /* permet au label de s'adapter au contenu */
   flex-grow: 0;          /* empêche l'expansion dans un flex container */
   width: auto !important;
-  max-width: 150px;      /* limite la largeur max */
+  max-width: 250px;      /* limite la largeur max */
   white-space: nowrap;   /* empêche le retour à la ligne */
+  font-size: 1.8rem; /* augmenter la taille de la police */
 }
 
 .radio-group input[type="radio"]:checked + label {
