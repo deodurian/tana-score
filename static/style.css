@@ -233,3 +233,9 @@ button.open-field:hover {
 .hidden {
   display: none !important;
 }
+
+.selected-button {
+  background-color: #e6b8c4 !important; /* gris rosé */
+  color: white;
+  border: 2px solid #cc8fa1;
+}

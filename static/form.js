@@ -164,3 +164,14 @@ window.onload = () => {
   checkConditionalQuestions();
   showFirstVisibleQuestion();
 };
+
+document.querySelectorAll('.button-radio').forEach(button => {
+  button.addEventListener('click', () => {
+    const name = button.name;
+    const group = document.querySelectorAll(`button[name="${name}"]`);
+    group.forEach(b => b.classList.remove('selected-button'));
+    button.classList.add('selected-button');
+  });
+});
+
+
