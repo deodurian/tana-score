@@ -124,5 +124,9 @@ def admin_stats():
 def google_verify():
     return send_from_directory('static', 'googlee76869bb6ba74b8b.html')
 
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory('static', 'sitemap.xml')
+
 if __name__ == '__main__':
     app.run(debug=True, port = 5000)
