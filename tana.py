@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 import json
 import os
 from TANA_code import calculer_T
@@ -119,6 +119,10 @@ def admin_stats():
         "score_moyen": round(moyenne, 2),
         "connected": 1  # valeur fictive pour l'instant
     })
+
+@app.route('/googlee76869bb6ba74b8b.html')
+def google_verify():
+    return send_from_directory('static', 'googlee76869bb6ba74b8b.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port = 5000)
