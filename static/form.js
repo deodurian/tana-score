@@ -158,6 +158,34 @@ function checkConditionalQuestions() {
   premierInput.addEventListener('input', updateVisibility);
 
   updateVisibility();
+
+  // Ajout du comportement pour la question "trompe" (q12)
+  const trompeInputs = document.querySelectorAll('input[name="trompe"]');
+  trompeInputs.forEach(input => {
+    input.addEventListener('change', () => {
+      const plaisirQuestion = document.getElementById('q13');
+      const refaireQuestion = document.getElementById('q14');
+
+      if (input.value === 'non' && input.checked) {
+        // Cacher les questions
+        if (plaisirQuestion) plaisirQuestion.classList.add('hidden');
+        if (refaireQuestion) refaireQuestion.classList.add('hidden');
+
+        // Cocher "non"
+        const plaisirInputs = document.querySelectorAll('input[name="plaisir"]');
+        const refaireInputs = document.querySelectorAll('input[name="refaire"]');
+        plaisirInputs.forEach(p => {
+          if (p.value === 'non') p.checked = true;
+        });
+        refaireInputs.forEach(r => {
+          if (r.value === 'non') r.checked = true;
+        });
+      } else if (input.value === 'oui' && input.checked) {
+        if (plaisirQuestion) plaisirQuestion.classList.remove('hidden');
+        if (refaireQuestion) refaireQuestion.classList.remove('hidden');
+      }
+    });
+  });
 }
 
 window.onload = () => {
@@ -173,5 +201,3 @@ document.querySelectorAll('.button-radio').forEach(button => {
     button.classList.add('selected-button');
   });
 });
-
-
