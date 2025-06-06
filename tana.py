@@ -119,12 +119,14 @@ def admin_register():
         admins = load_admins()
         if any(a['email'] == email for a in admins):
             return render_template('admin_register.html', error="Email déjà utilisé")
-        admins.append({
+        new_admin = {
             "email": email,
             "password": generate_password_hash(password),
             "validated": False
-        })
+        }
+        admins.append(new_admin)
         save_admins(admins)
+        print(f"Nouvel admin enregistré : {new_admin}")
         return render_template('admin_register.html', message="Demande envoyée. En attente de validation.")
     return render_template('admin_register.html', error=None)
 
