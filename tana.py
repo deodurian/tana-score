@@ -134,32 +134,18 @@ def admin_register():
 def admin():
     """
     Page d'administration affichant toutes les données collectées.
-    Protégée par une condition de session.
+    Si admin connecté, affiche aussi les demandes d'accès.
     """
     if not session.get('admin'):
-        # S'assure que l'utilisateur est "connecté" en tant qu'admin
-        return redirect(url_for('admin_login'))
-    data = load_data()  # Charge toutes les réponses sauvegardées
-    return render_template('admin.html', donnees=data)
-
-
-# --- Gestion demandes d'admin ---
-@app.route('/admin_requests', methods=['GET', 'POST'])
-def admin_requests():
-    if not session.get('admin'):
         return redirect(url_for('admin_login'))
 
+    data = load_data()
     admins = load_admins()
-    if request.method == 'POST':
-        email = request.form['email']
-        action = request.form['action']
-        for a in admins:
-            if a['email'] == email:
-                a['validated'] = (action == 'valider')
-        save_admins(admins)
+    pending = [a for a in admins if not a.get('validated', False)]
 
-    pending = [a for a in admins if not a['validated']]
-    return render_template('admin_requests.html', demandes=pending)
+    return render_template('admin.html', donnees=data, demandes=pending)
+
+
 
 
 # --- Déconnexion admin ---
