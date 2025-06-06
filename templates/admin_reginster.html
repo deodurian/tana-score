@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un compte admin</title>
+</head>
+<body>
+    <h1>Créer un compte administrateur</h1>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if message %}
+        <p style="color: green;">{{ message }}</p>
+    {% endif %}
+
+    <form method="POST">
+        <label for="email">Adresse email :</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <label for="password">Mot de passe :</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Créer le compte</button>
+    </form>
+</body>
+</html>

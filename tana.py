@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 from TANA_code import calculer_T
@@ -8,6 +9,20 @@ app = Flask(__name__)
 app.secret_key = 'clé secrete'
 
 DATA_FILE = "données.json"
+
+# --- Gestion admins ---
+ADMIN_FILE = "admins.json"
+
+def load_admins():
+    if not os.path.exists(ADMIN_FILE):
+        with open(ADMIN_FILE, 'w') as f:
+            json.dump([], f)
+    with open(ADMIN_FILE, 'r') as f:
+        return json.load(f)
+
+def save_admins(admins):
+    with open(ADMIN_FILE, 'w') as f:
+        json.dump(admins, f, indent=2)
 
 def load_data():
     """Charge les données existantes ou crée un fichier vide si nécessaire."""
@@ -66,17 +81,52 @@ def submit():
 def admin_login():
     """Page de connexion pour l'admin. Vérifie un mot de passe simple."""
     # N'autorise l'accès qu'à ceux qui sont passés par /submit avec la bonne combinaison
-    if not session.get('admin_candidate'):
+    # OU si déjà connecté
+    if not session.get('admin_candidate') and not session.get('admin'):
         return redirect(url_for('accueil'))
 
     if request.method == 'POST':
+        email = request.form.get('email')
         password = request.form.get('password')
-        if password == 'administratoraccess':
+        admins = load_admins()
+        admin = next((a for a in admins if a['email'] == email), None)
+        if admin:
+            if not admin.get('validated', False):
+                return render_template('admin_login.html', error="Compte en attente de validation.")
+            if check_password_hash(admin['password'], password):
+                session.pop('admin_candidate', None)
+                session['admin'] = True
+                session['admin_email'] = email
+                return redirect(url_for('admin'))
+            else:
+                return render_template('admin_login.html', error="Mot de passe incorrect.")
+        # fallback legacy password for first-time admin
+        if email == "admin@local" and password == 'administratoraccess':
             session.pop('admin_candidate', None)
             session['admin'] = True
+            session['admin_email'] = email
             return redirect(url_for('admin'))
-        return render_template('admin_login.html', error="Mot de passe incorrect.")
+        return render_template('admin_login.html', error="Identifiants incorrects.")
     return render_template('admin_login.html', error=None)
+
+
+# --- Route inscription admin ---
+@app.route('/admin_register', methods=['GET', 'POST'])
+def admin_register():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        admins = load_admins()
+        if any(a['email'] == email for a in admins):
+            return render_template('admin_register.html', error="Email déjà utilisé")
+        admins.append({
+            "email": email,
+            "password": generate_password_hash(password),
+            "validated": False
+        })
+        save_admins(admins)
+        return render_template('admin_register.html', message="Demande envoyée. En attente de validation.")
+    return render_template('admin_register.html', error=None)
 
 
 
@@ -91,6 +141,32 @@ def admin():
         return redirect(url_for('admin_login'))
     data = load_data()  # Charge toutes les réponses sauvegardées
     return render_template('admin.html', donnees=data)
+
+
+# --- Gestion demandes d'admin ---
+@app.route('/admin_requests', methods=['GET', 'POST'])
+def admin_requests():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+
+    admins = load_admins()
+    if request.method == 'POST':
+        email = request.form['email']
+        action = request.form['action']
+        for a in admins:
+            if a['email'] == email:
+                a['validated'] = (action == 'valider')
+        save_admins(admins)
+
+    pending = [a for a in admins if not a['validated']]
+    return render_template('admin_requests.html', demandes=pending)
+
+
+# --- Déconnexion admin ---
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('accueil'))
 
 # --- Routes supplémentaires admin ---
 from flask import send_file, jsonify
