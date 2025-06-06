@@ -93,9 +93,9 @@ def save_data(new_entry):
 
 # --- Routes ---
 
-@app.before_first_request
-def setup():
+if __name__ == '__main__':
     init_db()
+    app.run(debug=True, port=5000)
 
 @app.route("/")
 def accueil():
@@ -216,6 +216,3 @@ def google_verify():
 @app.route('/sitemap.xml')
 def sitemap():
     return send_from_directory('static', 'sitemap.xml')
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
