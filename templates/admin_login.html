@@ -8,19 +8,22 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="admin-container">
-    <h1>Connexion Admin</h1>
-    <form method="POST">
-      <label for="password">Mot de passe :</label>
-      <input type="password" name="password" required>
-      <br><br>
-      <button type="submit">Continuer</button>
-    </form>
-    {% if error %}
-      <p class="error">{{ error }}</p>
-    {% endif %}
-    <br>
-    <a href="{{ url_for('accueil') }}" class="btn-start">↩ Retour à l'accueil</a>
+  <div class="admin-wrapper">
+    <div class="admin-container">
+      <h1 class="admin-title">Connexion Admin</h1>
+      <form method="POST" class="admin-form">
+        <label for="password">Mot de passe :</label>
+        <input type="password" name="password" required>
+        <br><br>
+        <button type="submit">Continuer</button>
+      </form>
+      {% if error %}
+        <p class="error">{{ error }}</p>
+      {% endif %}
+      <p class="admin-register">Pas encore de compte ? <a href="{{ url_for('admin_register') }}">Créer un compte admin</a></p>
+      <br>
+      <a href="{{ url_for('accueil') }}" class="btn-start">↩ Retour à l'accueil</a>
+    </div>
   </div>
 </body>
 </html>
