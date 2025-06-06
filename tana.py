@@ -132,17 +132,31 @@ def admin_register():
 
 
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
     """
     Page d'administration affichant toutes les données collectées.
     Si admin connecté, affiche aussi les demandes d'accès.
+    Permet de valider/refuser les demandes via POST.
     """
     if not session.get('admin'):
         return redirect(url_for('admin_login'))
 
-    data = load_data()
     admins = load_admins()
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        action = request.form.get('action')
+        for a in admins:
+            if a['email'] == email:
+                if action == 'valider':
+                    a['validated'] = True
+                elif action == 'refuser':
+                    admins.remove(a)
+        save_admins(admins)
+        return redirect(url_for('admin'))
+
+    data = load_data()
     pending = [a for a in admins if not a.get('validated', False)]
 
     return render_template('admin.html', donnees=data, demandes=pending)
