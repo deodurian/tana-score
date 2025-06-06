@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
+import sqlite3
 from TANA_code import calculer_T
 from google_sheets_utils import enregistrer_dans_google_sheet
 
@@ -9,23 +10,75 @@ app = Flask(__name__)
 app.secret_key = 'clé secrete'
 
 DATA_FILE = "données.json"
+DB_PATH = 'admins.db'
 
-# --- Gestion admins ---
-ADMIN_FILE = "admins.json"
+# --- Gestion SQLite admins ---
 
-def load_admins():
-    if not os.path.exists(ADMIN_FILE):
-        with open(ADMIN_FILE, 'w') as f:
-            json.dump([], f)
-    with open(ADMIN_FILE, 'r') as f:
-        return json.load(f)
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-def save_admins(admins):
-    with open(ADMIN_FILE, 'w') as f:
-        json.dump(admins, f, indent=2)
+def init_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS admins (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        validated INTEGER NOT NULL DEFAULT 0
+    )
+    ''')
+    conn.commit()
+    conn.close()
+
+def add_admin(email, password):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    hashed = generate_password_hash(password)
+    try:
+        cursor.execute('INSERT INTO admins (email, password) VALUES (?, ?)', (email, hashed))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        conn.close()
+        return False  # Email déjà existant
+    conn.close()
+    return True
+
+def get_admin(email):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM admins WHERE email = ?', (email,))
+    admin = cursor.fetchone()
+    conn.close()
+    return admin
+
+def validate_admin(email):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('UPDATE admins SET validated = 1 WHERE email = ?', (email,))
+    conn.commit()
+    conn.close()
+
+def delete_admin(email):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM admins WHERE email = ?', (email,))
+    conn.commit()
+    conn.close()
+
+def get_pending_admins():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM admins WHERE validated = 0')
+    admins = cursor.fetchall()
+    conn.close()
+    return admins
+
+# --- Gestion données formulaire ---
 
 def load_data():
-    """Charge les données existantes ou crée un fichier vide si nécessaire."""
     if not os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'w') as f:
             json.dump([], f)
@@ -33,35 +86,28 @@ def load_data():
         return json.load(f)
 
 def save_data(new_entry):
-    """Ajoute une nouvelle entrée (dictionnaire) au fichier JSON de données."""
     data = load_data()
     data.append(new_entry)
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
+# --- Routes ---
 
+@app.before_first_request
+def setup():
+    init_db()
 
-# Route de la page d'accueil
 @app.route("/")
 def accueil():
-    return render_template("acceuil.html")  # Nouveau template
+    return render_template("acceuil.html")
 
-# Route du quiz
 @app.route("/quiz", methods=["GET"])
 def quiz():
-    """Affiche le formulaire multi-étapes."""
-    
     return render_template('tana.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    """
-    Traite les réponses du formulaire.
-    Si certaines réponses déclenchent le mode admin, redirige vers admin_login.
-    Sinon, calcule le score T et affiche le résultat.
-    """
     form = request.form
-    # Condition stricte pour accéder à l'admin : premier==0, age==70, score==35
     if (
         "premier" in form and "age" in form and "score" in form and
         form["premier"].isdigit() and form["age"].isdigit() and form["score"].isdigit()
@@ -70,28 +116,22 @@ def submit():
         session['admin_candidate'] = True
         return redirect(url_for('admin_login'))
 
-    # Sinon, on calcule le score et affiche le résultat
     save_data(dict(form))
     enregistrer_dans_google_sheet(dict(form))
-    # 'compute_t_score' retourne (score_brut, pourcentage_sigmoide)
     t_score, pourcentage = calculer_T(dict(form))
     return render_template('resultat.html', T=t_score, pourcentage=pourcentage)
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
-    """Page de connexion pour l'admin. Vérifie un mot de passe simple."""
-    # N'autorise l'accès qu'à ceux qui sont passés par /submit avec la bonne combinaison
-    # OU si déjà connecté
     if not session.get('admin_candidate') and not session.get('admin'):
         return redirect(url_for('accueil'))
 
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        admins = load_admins()
-        admin = next((a for a in admins if a['email'] == email), None)
+        admin = get_admin(email)
         if admin:
-            if not admin.get('validated', False):
+            if not admin['validated']:
                 return render_template('admin_login.html', error="Compte en attente de validation.")
             if check_password_hash(admin['password'], password):
                 session.pop('admin_candidate', None)
@@ -109,80 +149,51 @@ def admin_login():
         return render_template('admin_login.html', error="Identifiants incorrects.")
     return render_template('admin_login.html', error=None)
 
-
-# --- Route inscription admin ---
 @app.route('/admin_register', methods=['GET', 'POST'])
 def admin_register():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        admins = load_admins()
-        if any(a['email'] == email for a in admins):
+        if not add_admin(email, password):
             return render_template('admin_register.html', error="Email déjà utilisé")
-        new_admin = {
-            "email": email,
-            "password": generate_password_hash(password),
-            "validated": False
-        }
-        admins.append(new_admin)
-        save_admins(admins)
-        print(f"Nouvel admin enregistré : {new_admin}")
         return render_template('admin_register.html', message="Demande envoyée. En attente de validation.")
     return render_template('admin_register.html', error=None)
 
-
-
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    """
-    Page d'administration affichant toutes les données collectées.
-    Si admin connecté, affiche aussi les demandes d'accès.
-    Permet de valider/refuser les demandes via POST.
-    """
     if not session.get('admin'):
         return redirect(url_for('admin_login'))
-
-    admins = load_admins()
 
     if request.method == 'POST':
         email = request.form.get('email')
         action = request.form.get('action')
-        for a in admins:
-            if a['email'] == email:
-                if action == 'valider':
-                    a['validated'] = True
-                elif action == 'refuser':
-                    admins.remove(a)
-        save_admins(admins)
+        if action == 'valider':
+            validate_admin(email)
+        elif action == 'refuser':
+            delete_admin(email)
         return redirect(url_for('admin'))
 
     data = load_data()
-    pending = [a for a in admins if not a.get('validated', False)]
+    pending = get_pending_admins()
 
     return render_template('admin.html', donnees=data, demandes=pending)
 
-
-
-
-# --- Déconnexion admin ---
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('accueil'))
 
-# --- Routes supplémentaires admin ---
-from flask import send_file, jsonify
-
+# Routes supplémentaires pour admin (download, stats, etc.)
 @app.route('/admin/download')
 def admin_download():
     if not session.get('admin'):
         return redirect(url_for('admin_login'))
-    return send_file(DATA_FILE, as_attachment=True)
+    return send_from_directory('.', DATA_FILE, as_attachment=True)
 
 @app.route('/admin/stats')
 def admin_stats():
     if not session.get('admin'):
-        return jsonify({"error": "non autorisé"}), 403
+        return {"error": "non autorisé"}, 403
 
     data = load_data()
     total = len(data)
@@ -192,11 +203,11 @@ def admin_stats():
     except Exception:
         moyenne = 0
 
-    return jsonify({
+    return {
         "total_users": total,
         "score_moyen": round(moyenne, 2),
-        "connected": 1  # valeur fictive pour l'instant
-    })
+        "connected": 1
+    }
 
 @app.route('/googlee76869bb6ba74b8b.html')
 def google_verify():
@@ -207,4 +218,4 @@ def sitemap():
     return send_from_directory('static', 'sitemap.xml')
 
 if __name__ == '__main__':
-    app.run(debug=True, port = 5000)
+    app.run(debug=True, port=5000)
