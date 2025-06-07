@@ -119,11 +119,10 @@ def submit():
     save_data(dict(form))
     t_score, pourcentage = calculer_T(dict(form))
     try:
-        enregistrer_dans_google_sheet({
-            **form,
-            "T": t_score,
-            "pourcentage": pourcentage
-        })
+        all_data = dict(form)
+        all_data["T"] = t_score
+        all_data["pourcentage"] = pourcentage
+        enregistrer_dans_google_sheet(all_data)
     except Exception as e:
         print("Erreur envoi Google Sheets:", e)
     return render_template('resultat.html', T=t_score, pourcentage=pourcentage)
