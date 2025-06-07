@@ -1,5 +1,5 @@
-import gspread 
-from oauth2client.service_account import ServiceAccountCredentials 
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 def enregistrer_dans_google_sheet(donnees):
     scope = [
@@ -7,26 +7,24 @@ def enregistrer_dans_google_sheet(donnees):
         'https://www.googleapis.com/auth/drive'
     ]
 
-    creds = ServiceAccountCredentials.from_json_keyfile_name(
-    'tana-461711-d81eb85d76fb.json', scope
-    )
-    client = gspread.authorize(creds)
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(
+            'tana-461711-d81eb85d76fb.json', scope
+        )
+        client = gspread.authorize(creds)
 
-    # Ouvre la feuille par son ID (prends l'ID dans l'URL du Google Sheet)
-    sheet = client.open_by_key("15sMF5fVDLo-ROM_sFKcpuSdAzg2YyWh_mX2bsxLowo8").sheet1
+        sheet = client.open_by_key("15sMF5fVDLo-ROM_sFKcpuSdAzg2YyWh_mX2bsxLowo8").sheet1
 
-    # Ajoute une ligne avec les données (adapter l'ordre si besoin)
-    sheet.append_row([
-    donnees.get("sexe", ""),
-    donnees.get("age", ""),
-    donnees.get("ex", ""),
-    donnees.get("bodycount", ""),
-    donnees.get("instagram", ""),
-    donnees.get("abonnes", ""),
-    donnees.get("premier", ""),
-    donnees.get("trompe", "non"),
-    donnees.get("plaisir", "non"),
-    donnees.get("refaire", "non"),
-    donnees.get("T")
-    ])
-    
+        # Vérifier si la feuille est vide (cellule A1 vide)
+        if sheet.cell(1, 1).value == '':
+            print("Feuille vide, ajout des en-têtes.")
+            sheet.append_row(list(donnees.keys()))
+
+        header = sheet.row_values(1)
+        row = [donnees.get(col, "") for col in header]
+
+        print("Ajout de la ligne:", row)
+        sheet.append_row(row)
+        print("Données ajoutées avec succès.")
+    except Exception as e:
+        print(f"Erreur lors de l'enregistrement dans Google Sheet : {e}")
