@@ -117,8 +117,15 @@ def submit():
         return redirect(url_for('admin_login'))
 
     save_data(dict(form))
-    enregistrer_dans_google_sheet(dict(form))
     t_score, pourcentage = calculer_T(dict(form))
+    try:
+        enregistrer_dans_google_sheet({
+            **form,
+            "T": t_score,
+            "pourcentage": pourcentage
+        })
+    except Exception as e:
+        print("Erreur envoi Google Sheets:", e)
     return render_template('resultat.html', T=t_score, pourcentage=pourcentage)
 
 @app.route('/admin_login', methods=['GET', 'POST'])
