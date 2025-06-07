@@ -119,7 +119,7 @@ def submit():
     save_data(dict(form))
     t_score, pourcentage = calculer_T(dict(form))
     try:
-        all_data = dict(form)
+        all_data = {key: form.get(key, "") for key in form.keys()}
         all_data["T"] = t_score
         all_data["pourcentage"] = pourcentage
         enregistrer_dans_google_sheet(all_data)
