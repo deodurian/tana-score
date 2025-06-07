@@ -14,20 +14,37 @@
 
 </head>
 <body>
-  <div class="resultat-container">
-    <h1>Voici ton résultat</h1>
+  <div class="resultat-container fade-in">
+    <div class="result-card">
+      <h1>Voici ton résultat</h1>
 
-    {% if T is not none %}
-      <p><strong>Score brut :</strong> {{ T }}</p>
-    {% else %}
-      <p>Aucun score n’a été calculé.</p>
-    {% endif %}
+      {% if T is not none %}
+        <p class="score-brut"><strong>Score brut :</strong> {{ T }}</p>
+        {% if T <= 10 %}
+          <p class="message-resultat">Bravo à toi, tu n'es pas une tana.</p>
+        {% elif T <= 30 %}
+          <p class="message-resultat">Aïe… c’est pas que tu es une tana, c’est que tu aimes bien t’amuser.</p>
+        {% elif T <= 80 %}
+          <p class="message-resultat">Oula, on a affaire à une tana timide, mais une tana quand même.</p>
+        {% elif T <= 220 %}
+          <p class="message-resultat">Une tana moyenne.</p>
+        {% elif T <= 500 %}
+          <p class="message-resultat">On rentre dans une catégorie de tana qui nous dépasse.</p>
+        {% elif T <= 1000 %}
+          <p class="message-resultat">Tu vis pour t’amuser. Une vie de péché.</p>
+        {% else %}
+          <p class="message-resultat">On a dépassé les limites humaines… consulte un psy peut-être 😅</p>
+        {% endif %}
+      {% else %}
+        <p>Aucun score n’a été calculé.</p>
+      {% endif %}
 
-    {% if pourcentage is not none %}
-      <p><strong>Pourcentage normalisé :</strong> {{ pourcentage }} %</p>
-    {% endif %}
+      {% if pourcentage is not none %}
+        <p class="pourcentage"><strong>Pourcentage normalisé :</strong> {{ pourcentage }} %</p>
+      {% endif %}
 
-    <a href="/">↩ Revenir au formulaire</a>
+      <a class="back-link" href="/">↩ Revenir au formulaire</a>
+    </div>
   </div>
 </body>
 </html>

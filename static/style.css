@@ -278,3 +278,65 @@ form#tanaForm {
 .admin-register a:hover {
   text-decoration: underline;
 }
+
+
+/* Styles pour la page résultat */
+.resultat-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  padding: 20px;
+}
+
+.result-card {
+  background-color: #2c2c2c;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 25px rgba(255, 255, 255, 0.1);
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  animation: fadeIn 1s ease forwards;
+}
+
+.result-card h1 {
+  font-size: 3rem;
+  color: #ff69b4;
+  margin-bottom: 20px;
+}
+
+.result-card .score-brut,
+.result-card .pourcentage {
+  font-size: 2rem;
+  margin: 20px 0;
+}
+
+.result-card .back-link {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 12px 24px;
+  background-color: #444;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: background-color 0.3s;
+}
+
+.result-card .back-link:hover {
+  background-color: #666;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Style pour le message dynamique du résultat */
+.message-resultat {
+  font-size: 1.8rem;
+  margin-top: 20px;
+  color: #fce4ec;
+  font-weight: bold;
+  animation: fadeIn 1.2s ease-in-out;
+}
