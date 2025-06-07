@@ -198,8 +198,16 @@ def calculer_T(donnees):
             T *= 1.7
     
 
-    def sigmoid_percent(T, x0=70, k=0.009):
-        return round(100 / (1 + exp(-k * (T - x0))))
+    def sigmoid_percent(T):
+        T_max = 10000
+        T_centre = 100
+        k = 7  # pente raide pour croissance rapide après 3000
+
+        if T <= 0:
+            return round(-10 * log1p(abs(T)))  # pourcentage négatif pour scores négatifs
+
+        pourcentage = 100 / (1 + exp(-k * (T - T_centre) / T_max))
+        return round(pourcentage)
     
     pourcentage = sigmoid_percent(T)
     return T, pourcentage
