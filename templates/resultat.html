@@ -14,8 +14,8 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
-  <div id="result-block">
-    <div class="result-card fade-in">
+  <div id="result-block" class="fade-in">
+    <div class="result-card">
       <h1>Voici ton résultat : </h1>
 
       {% if T is not none %}
@@ -55,7 +55,10 @@
   <script>
     function downloadResult() {
       const resultBlock = document.getElementById('result-block');
-      html2canvas(resultBlock).then(canvas => {
+      html2canvas(resultBlock, {
+        backgroundColor: '#1a1a1a',
+        scale: 2
+      }).then(canvas => {
         const link = document.createElement('a');
         link.download = 'TANA_resultat.png';
         link.href = canvas.toDataURL('image/png');
