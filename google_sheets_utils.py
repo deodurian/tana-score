@@ -20,10 +20,13 @@ def enregistrer_dans_google_sheet(donnees):
             print("Feuille vide, ajout des en-têtes.")
             sheet.append_row(list(donnees.keys()))
 
-        header = sheet.row_values(1)
-        row = [donnees.get(col, "") for col in header]
+        header = list(donnees.keys())
+        row = list(donnees.values())
 
-        print("Ajout de la ligne:", row)
+        print("Clés envoyées :", header)
+        print("Valeurs envoyées :", row)
+
+        sheet.append_row(header)
         sheet.append_row(row)
         print("Données ajoutées avec succès.")
     except Exception as e:
