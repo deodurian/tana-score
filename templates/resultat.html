@@ -11,11 +11,11 @@
   <!-- Favicon (petite icône dans l’onglet) -->
   <link rel="icon" sizes="16x16" type="image/png" href="{{ url_for('static', filename='img/t(1).png') }}">
   <link rel="icon" sizes="32x32" type="image/png" href="{{ url_for('static', filename='img/t(1).png') }}">
-
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
-  <div class="resultat-container fade-in">
-    <div class="result-card">
+  <div id="result-block">
+    <div class="result-card fade-in">
       <h1>Voici ton résultat : </h1>
 
       {% if T is not none %}
@@ -46,5 +46,22 @@
       <a class="back-link" href="/">↩ Revenir au formulaire</a>
     </div>
   </div>
+
+  <div class="action-buttons" style="margin-top: 20px; text-align: center;">
+    <button onclick="downloadResult()">📥 Télécharger mon score</button>
+    <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
+  </div>
+
+  <script>
+    function downloadResult() {
+      const resultBlock = document.getElementById('result-block');
+      html2canvas(resultBlock).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'TANA_resultat.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+  </script>
 </body>
 </html>
