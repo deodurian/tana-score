@@ -340,3 +340,14 @@ form#tanaForm {
   font-weight: bold;
   animation: fadeIn 1.2s ease-in-out;
 }
+/* Style visuel clair pour la div #result-block capturée par html2canvas */
+#result-block {
+  background-color: #1a1a1a;
+  padding: 40px;
+  color: white;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  margin: 0 auto;
+  max-width: 800px;
+  text-align: center;
+}
