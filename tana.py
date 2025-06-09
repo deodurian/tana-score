@@ -5,6 +5,9 @@ import os
 import sqlite3
 from TANA_code import calculer_T
 from google_sheets_utils import enregistrer_dans_google_sheet
+from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
+from flask import send_file
 
 app = Flask(__name__)
 app.secret_key = 'clé secrete'
@@ -222,3 +225,56 @@ def google_verify():
 @app.route('/sitemap.xml')
 def sitemap():
     return send_from_directory('static', 'sitemap.xml')
+
+
+
+# Route pour servir robots.txt
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory('static', 'robots.txt')
+
+
+# --- Génération et téléchargement d'une image du score ---
+
+
+@app.route('/telecharger_image')
+def telecharger_image():
+    # Récupérer score et % en paramètre GET, sinon valeurs par défaut
+    t_score = request.args.get('T', default='0')
+    pourcentage = request.args.get('pourcentage', default='0')
+
+    # Création d'une image simple
+    largeur, hauteur = 500, 300
+    image = Image.new('RGB', (largeur, hauteur), color=(255, 240, 245))  # fond rose clair
+    draw = ImageDraw.Draw(image)
+
+    # Charger une police système basique
+    try:
+        font_titre = ImageFont.truetype("arial.ttf", 40)
+        font_score = ImageFont.truetype("arial.ttf", 60)
+        font_pourcent = ImageFont.truetype("arial.ttf", 40)
+    except IOError:
+        font_titre = ImageFont.load_default()
+        font_score = ImageFont.load_default()
+        font_pourcent = ImageFont.load_default()
+
+    # Texte
+    texte_titre = "Score TANA"
+    texte_score = f"{t_score}"
+    texte_pourcentage = f"{pourcentage}%"
+
+    # Centrer les textes
+    w_titre, h_titre = draw.textsize(texte_titre, font=font_titre)
+    w_score, h_score = draw.textsize(texte_score, font=font_score)
+    w_pourcent, h_pourcent = draw.textsize(texte_pourcentage, font=font_pourcent)
+
+    draw.text(((largeur - w_titre) / 2, 40), texte_titre, fill="purple", font=font_titre)
+    draw.text(((largeur - w_score) / 2, 110), texte_score, fill="darkred", font=font_score)
+    draw.text(((largeur - w_pourcent) / 2, 200), texte_pourcentage, fill="purple", font=font_pourcent)
+
+    # Enregistrer en mémoire
+    buf = BytesIO()
+    image.save(buf, format="PNG")
+    buf.seek(0)
+
+    return send_file(buf, mimetype='image/png', as_attachment=True, download_name='score_tana.png')

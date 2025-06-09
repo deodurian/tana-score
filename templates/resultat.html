@@ -9,9 +9,7 @@
   <!-- Lien vers une feuille de styles externe -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <!-- Favicon (petite icône dans l’onglet) -->
-  <link rel="icon" sizes="16x16" type="image/png" href="{{ url_for('static', filename='img/t(1).png') }}">
-  <link rel="icon" sizes="32x32" type="image/png" href="{{ url_for('static', filename='img/t(1).png') }}">
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon.png') }}">  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
   <div id="result-block" class="fade-in" style="display: flex; flex-direction: column; align-items: center;">
@@ -50,40 +48,14 @@
   </div>
 
   <div class="action-buttons" style="margin-top: 20px; text-align: center;">
-    <button id="download-btn">📥 Télécharger mon score</button>
+    <form method="get" action="{{ url_for('telecharger_image') }}">
+      <input type="hidden" name="T" value="{{ T }}">
+      <input type="hidden" name="pourcentage" value="{{ pourcentage }}">
+      <button type="submit">📥 Télécharger mon score</button>
+    </form>
     <button onclick="window.open('https://www.instagram.com/', '_blank')">📸 Instagram</button>
     <button onclick="window.open('https://twitter.com/', '_blank')">🐦 Twitter</button>
     <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
   </div>
-
-  <script>
-    function downloadResult() {
-      const resultCard = document.querySelector('.result-card');
-
-      // Style temporaire pour améliorer la capture
-      const originalBg = resultCard.style.backgroundColor;
-      const originalColor = resultCard.style.color;
-      resultCard.style.backgroundColor = '#1a1a1a';
-      resultCard.style.color = 'white';
-
-      html2canvas(resultCard, {
-        backgroundColor: null,
-        scale: 3,
-        scrollX: 0,
-        scrollY: -window.scrollY
-      }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'TANA_resultat.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-
-        // Réinitialiser le style
-        resultCard.style.backgroundColor = originalBg;
-        resultCard.style.color = originalColor;
-      });
-    }
-
-    document.getElementById('download-btn').addEventListener('click', downloadResult);
-  </script>
 </body>
 </html>
