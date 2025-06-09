@@ -247,17 +247,20 @@ def telecharger_image():
         except Exception:
             pourcentage_val = 0
 
-        largeur, hauteur = 1920, 1080
-        image = Image.new('RGB', (largeur, hauteur), color=(255, 240, 245))
+        # Charger l'image de fond à partir de static/image.png
+        from PIL import Image
+        image_path = os.path.join('static', 'image.png')
+        image = Image.open(image_path).convert("RGBA")
+        largeur, hauteur = image.size
         draw = ImageDraw.Draw(image)
 
         # Charger police DejaVuSans si dispo, sinon défaut
         try:
             font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-            font_titre = ImageFont.truetype(font_path, 100)
-            font_label = ImageFont.truetype(font_path, 60)
-            font_valeur = ImageFont.truetype(font_path, 120)
-            font_phrase = ImageFont.truetype(font_path, 50)
+            font_titre = ImageFont.truetype(font_path, 80)
+            font_label = ImageFont.truetype(font_path, 40)
+            font_valeur = ImageFont.truetype(font_path, 80)
+            font_phrase = ImageFont.truetype(font_path, 40)
         except IOError:
             font_titre = font_label = font_valeur = font_phrase = ImageFont.load_default()
 
@@ -291,7 +294,8 @@ def telecharger_image():
         rect_y1 = 480
         rect_x0 = x_center - w_val / 2 - 30
         rect_x1 = x_center + w_val / 2 + 30
-        draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="pink")
+        # Removed the rectangle drawing here as per instructions
+        # draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="pink")
         draw.text((x_center - w_val / 2, 340), val_score, fill="purple", font=font_valeur)
 
         # Bloc "Pourcentage" encadré sombrement
@@ -306,7 +310,8 @@ def telecharger_image():
         rect2_y1 = 760
         rect2_x0 = x_center - w_val2 / 2 - 30
         rect2_x1 = x_center + w_val2 / 2 + 30
-        draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="pink")
+        # Removed the rectangle drawing here as per instructions
+        # draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="pink")
         draw.text((x_center - w_val2 / 2, 620), val_pct, fill="purple", font=font_valeur)
 
         # Phrase personnalisée en bas selon le score
