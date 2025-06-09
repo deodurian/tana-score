@@ -247,10 +247,11 @@ def telecharger_image():
         except Exception:
             pourcentage_val = 0
 
-        # Charger l'image de fond à partir de static/image.png
+        # Charger l'image de fond à partir de static/tana logo chrome rose.webp
         from PIL import Image
-        image_path = os.path.join('static', 'image.png')
+        image_path = os.path.join('static', 'tana logo chrome rose.webp')
         image = Image.open(image_path).convert("RGBA")
+        image = image.resize((1920, 1080))
         largeur, hauteur = image.size
         draw = ImageDraw.Draw(image)
 
