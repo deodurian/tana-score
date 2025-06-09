@@ -237,113 +237,106 @@ def robots():
 # --- Génération et téléchargement d'une image du score ---
 
 
+
+# Nouvelle version propre et cohérente de la route /telecharger_image
 @app.route('/telecharger_image')
 def telecharger_image():
     try:
+        from PIL import Image
         t_score = request.args.get('T', default='0')
         pourcentage = request.args.get('pourcentage', default='0')
+
+        # Dimensions carrées
+        largeur, hauteur = 1080, 1080
+
+        # Créer fond uni
+        fond = Image.new('RGBA', (largeur, hauteur), "#fcaec0")
+
+        # Ajouter image de fond
+        image_path = os.path.join('static', 'tana logo chrome rose.webp')
         try:
-            pourcentage_val = float(pourcentage)
-        except Exception:
-            pourcentage_val = 0
+            image_fond = Image.open(image_path).convert("RGBA").resize((largeur, hauteur))
+            fond.paste(image_fond, (0, 0), image_fond)
+        except Exception as e:
+            print("Erreur chargement fond :", e)
 
-        # Charger l'image de fond à partir de static/image.png
-        from PIL import Image
-        image_path = os.path.join('static', 'image.png')
-        image = Image.open(image_path).convert("RGBA")
-        largeur, hauteur = image.size
-        draw = ImageDraw.Draw(image)
+        draw = ImageDraw.Draw(fond)
 
-        # Charger police DejaVuSans si dispo, sinon défaut
+        # Polices
         try:
             font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
             font_titre = ImageFont.truetype(font_path, 80)
             font_label = ImageFont.truetype(font_path, 40)
             font_valeur = ImageFont.truetype(font_path, 80)
-            font_phrase = ImageFont.truetype(font_path, 40)
-        except IOError:
+            font_phrase = ImageFont.truetype(font_path, 30)
+        except:
             font_titre = font_label = font_valeur = font_phrase = ImageFont.load_default()
 
-        # Ajouter logo en haut à gauche
+        # Logo en haut à gauche
         try:
-            logo_path = os.path.join("static", "tana logo.png")
+            logo_path = os.path.join("static", "tana logo noir.png")
             logo = Image.open(logo_path).convert("RGBA")
-            logo.thumbnail((300, 300))
-            image.paste(logo, (50, 50), logo)
+            logo.thumbnail((200, 200))
+            fond.paste(logo, (40, 40), logo)
         except Exception as e:
-            print("Logo non trouvé ou erreur d'insertion :", e)
+            print("Logo introuvable :", e)
 
-        # Titre "Score TANA" centré, souligné
+        x_center = largeur // 2
+
+        # Titre Score TANA
         texte_titre = "Score TANA"
         w_titre = draw.textbbox((0, 0), texte_titre, font=font_titre)[2]
         draw.text(((largeur - w_titre) / 2, 80), texte_titre, fill="purple", font=font_titre)
-        # Soulignement
-        draw.line(((largeur - w_titre) / 2, 200, (largeur + w_titre) / 2, 200), fill="purple", width=5)
+        draw.line(((largeur - w_titre) / 2, 160, (largeur + w_titre) / 2, 160), fill="purple", width=4)
 
-        # Bloc "Score brut" encadré sombrement
+        # Score brut
         label_score = "Score brut"
         val_score = str(t_score)
         w_label = draw.textbbox((0, 0), label_score, font=font_label)[2]
         w_val = draw.textbbox((0, 0), val_score, font=font_valeur)[2]
-        x_center = largeur // 2
 
-        # Label
-        draw.text((x_center - w_label / 2, 250), label_score, fill="pink", font=font_label)
-        # Encadré sombre
-        rect_y0 = 330
-        rect_y1 = 480
-        rect_x0 = x_center - w_val / 2 - 30
-        rect_x1 = x_center + w_val / 2 + 30
-        # Removed the rectangle drawing here as per instructions
-        # draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="pink")
-        draw.text((x_center - w_val / 2, 340), val_score, fill="purple", font=font_valeur)
+        draw.text((x_center - w_label / 2, 200), label_score, fill="black", font=font_label)
+        draw.text((x_center - w_val / 2, 250), val_score, fill="darkred", font=font_valeur)
 
-        # Bloc "Pourcentage" encadré sombrement
+        # Pourcentage
         label_pct = "Pourcentage"
         val_pct = f"{pourcentage}%"
         w_label2 = draw.textbbox((0, 0), label_pct, font=font_label)[2]
         w_val2 = draw.textbbox((0, 0), val_pct, font=font_valeur)[2]
-        # Label
-        draw.text((x_center - w_label2 / 2, 530), label_pct, fill="pink", font=font_label)
-        # Encadré sombre
-        rect2_y0 = 610
-        rect2_y1 = 760
-        rect2_x0 = x_center - w_val2 / 2 - 30
-        rect2_x1 = x_center + w_val2 / 2 + 30
-        # Removed the rectangle drawing here as per instructions
-        # draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="pink")
-        draw.text((x_center - w_val2 / 2, 620), val_pct, fill="purple", font=font_valeur)
 
-        # Phrase personnalisée en bas selon le score
+        draw.text((x_center - w_label2 / 2, 400), label_pct, fill="black", font=font_label)
+        draw.text((x_center - w_val2 / 2, 450), val_pct, fill="darkred", font=font_valeur)
+
+        # Phrase finale selon le score brut
         try:
-            t_score_val = float(t_score)
+            t_val = float(t_score)
         except:
-            t_score_val = 0
+            t_val = 0
 
-        if t_score_val <= 10:
+        if t_val <= 10:
             phrase = "Bravo à toi, tu n'es pas une tana."
-        elif t_score_val <= 30:
+        elif t_val <= 30:
             phrase = "Aïe… c’est pas que tu es une tana, c’est que tu aimes bien t’amuser."
-        elif t_score_val <= 80:
+        elif t_val <= 80:
             phrase = "Oula, on a affaire à une tana timide, mais une tana quand même."
-        elif t_score_val <= 220:
+        elif t_val <= 220:
             phrase = "Une tana moyenne."
-        elif t_score_val <= 500:
+        elif t_val <= 500:
             phrase = "On rentre dans une catégorie de tana qui nous dépasse."
-        elif t_score_val <= 1000:
+        elif t_val <= 1000:
             phrase = "Tu vis pour t’amuser. Une vie de péché."
         else:
             phrase = "On a dépassé les limites humaines… consulte un psy peut-être 😅"
 
         w_phrase = draw.textbbox((0, 0), phrase, font=font_phrase)[2]
-        draw.text(((largeur - w_phrase) / 2, 900), phrase, fill="purple", font=font_phrase)
+        draw.text(((largeur - w_phrase) / 2, 650), phrase, fill="purple", font=font_phrase)
 
-        # Enregistrer en mémoire
+        # Envoi image
         buf = BytesIO()
-        image.save(buf, format="PNG")
+        fond.save(buf, format="PNG")
         buf.seek(0)
-
         return send_file(buf, mimetype='image/png', as_attachment=True, download_name='score_tana.png')
+
     except Exception as e:
-        print("Erreur lors de la génération de l'image :", e)
-        return "Erreur interne lors de la génération de l'image.", 500
+        print("Erreur génération image :", e)
+        return "Erreur lors de la génération de l'image", 500
