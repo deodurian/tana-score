@@ -46,23 +46,27 @@
 
       <a class="back-link" href="/">↩ Revenir au formulaire</a>
 
-      <div class="action-buttons" style="margin-top: 20px; text-align: center;">
-        <button id="download-btn">📥 Télécharger mon score</button>
-        <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
-      </div>
     </div>
+  </div>
+
+  <div class="action-buttons" style="margin-top: 20px; text-align: center;">
+    <button id="download-btn">📥 Télécharger mon score</button>
+    <button onclick="window.open('https://www.instagram.com/', '_blank')">📸 Instagram</button>
+    <button onclick="window.open('https://twitter.com/', '_blank')">🐦 Twitter</button>
+    <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
   </div>
 
   <script>
     function downloadResult() {
-      const resultBlock = document.getElementById('result-block');
-      
-      // Appliquer un fond temporaire blanc et padding pour la capture
-      resultBlock.style.backgroundColor = '#fff';
-      resultBlock.style.padding = '20px';
-      resultBlock.style.borderRadius = '12px';
+      const resultCard = document.querySelector('.result-card');
 
-      html2canvas(resultBlock, {
+      // Style temporaire pour améliorer la capture
+      const originalBg = resultCard.style.backgroundColor;
+      const originalColor = resultCard.style.color;
+      resultCard.style.backgroundColor = '#1a1a1a';
+      resultCard.style.color = 'white';
+
+      html2canvas(resultCard, {
         backgroundColor: null,
         scale: 3,
         scrollX: 0,
@@ -73,10 +77,9 @@
         link.href = canvas.toDataURL('image/png');
         link.click();
 
-        // Revenir au style original
-        resultBlock.style.backgroundColor = '';
-        resultBlock.style.padding = '';
-        resultBlock.style.borderRadius = '';
+        // Réinitialiser le style
+        resultCard.style.backgroundColor = originalBg;
+        resultCard.style.color = originalColor;
       });
     }
 
