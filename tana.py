@@ -248,11 +248,12 @@ def telecharger_image():
             pourcentage_val = 0
 
         # Créer un fond rose
-        background = Image.new('RGBA',  "#fcaec0")
+        background = Image.new('RGBA', (1920, 1080), "#fcaec0")
 
         # Charger et redimensionner l'image
         image_path = os.path.join('static', 'tana logo chrome rose.webp')
-        image = Image.open(image_path).convert("RGBA")
+        image = Image.open(image_path).convert("RGBA").resize((1920, 1080))
+
         # Fusionner sur fond
         background.paste(image, (0, 0), image)
 
