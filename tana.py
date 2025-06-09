@@ -265,10 +265,10 @@ def telecharger_image():
             texte_score = f"{t_score}"
             texte_pourcentage = f"{pourcentage}%"
 
-            # Centrer les textes
-            w_titre, h_titre = draw.textsize(texte_titre, font=font_titre)
-            w_score, h_score = draw.textsize(texte_score, font=font_score)
-            w_pourcent, h_pourcent = draw.textsize(texte_pourcentage, font=font_pourcent)
+            # Centrer les textes (utilise textbbox pour compatibilité Pillow moderne)
+            w_titre = draw.textbbox((0, 0), texte_titre, font=font_titre)[2]
+            w_score = draw.textbbox((0, 0), texte_score, font=font_score)[2]
+            w_pourcent = draw.textbbox((0, 0), texte_pourcentage, font=font_pourcent)[2]
 
             draw.text(((largeur - w_titre) / 2, 40), texte_titre, fill="purple", font=font_titre)
             draw.text(((largeur - w_score) / 2, 110), texte_score, fill="darkred", font=font_score)
