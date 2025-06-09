@@ -310,16 +310,25 @@ def telecharger_image():
         draw.text((x_center - w_val2 / 2, 620), val_pct, fill="white", font=font_valeur)
 
         # Phrase personnalisée en bas selon le score
-        if pourcentage_val >= 90:
-            phrase = "Tu es un champion du TANA."
-        elif pourcentage_val >= 70:
-            phrase = "Tu t'en sors très bien."
-        elif pourcentage_val >= 50:
-            phrase = "Tu es dans la moyenne."
-        elif pourcentage_val >= 30:
-            phrase = "Tu pourrais faire mieux..."
+        try:
+            t_score_val = float(t_score)
+        except:
+            t_score_val = 0
+
+        if t_score_val <= 10:
+            phrase = "Bravo à toi, tu n'es pas une tana."
+        elif t_score_val <= 30:
+            phrase = "Aïe… c’est pas que tu es une tana, c’est que tu aimes bien t’amuser."
+        elif t_score_val <= 80:
+            phrase = "Oula, on a affaire à une tana timide, mais une tana quand même."
+        elif t_score_val <= 220:
+            phrase = "Une tana moyenne."
+        elif t_score_val <= 500:
+            phrase = "On rentre dans une catégorie de tana qui nous dépasse."
+        elif t_score_val <= 1000:
+            phrase = "Tu vis pour t’amuser. Une vie de péché."
         else:
-            phrase = "On va devoir avoir une conversation."
+            phrase = "On a dépassé les limites humaines… consulte un psy peut-être 😅"
 
         w_phrase = draw.textbbox((0, 0), phrase, font=font_phrase)[2]
         draw.text(((largeur - w_phrase) / 2, 900), phrase, fill="darkblue", font=font_phrase)
