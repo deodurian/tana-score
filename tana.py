@@ -327,6 +327,7 @@ def telecharger_image():
             t_score_val = float(t_score)
         except:
             t_score_val = 0
+        t_score_val = max(t_score_val, 0)
 
         if t_score_val <= 10:
             phrase = "Bravo à toi, tu n'es pas une tana."
@@ -340,8 +341,10 @@ def telecharger_image():
             phrase = "On rentre dans une catégorie de tana qui nous dépasse."
         elif t_score_val <= 1000:
             phrase = "Tu vis pour t’amuser. Une vie de péché."
-        else:
+        elif t_score_val > 1000:
             phrase = "On a dépassé les limites humaines… consulte un psy peut-être 😅"
+        else:
+            phrase = "Score invalide. Recommence le quiz."
 
         w_phrase = draw.textbbox((0, 0), phrase, font=font_phrase)[2]
         draw.text(((largeur - w_phrase) / 2, 900), phrase, fill="purple", font=font_phrase)
