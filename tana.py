@@ -240,49 +240,96 @@ def robots():
 @app.route('/telecharger_image')
 def telecharger_image():
     try:
+        t_score = request.args.get('T', default='0')
+        pourcentage = request.args.get('pourcentage', default='0')
         try:
-            # Récupérer score et % en paramètre GET, sinon valeurs par défaut
-            t_score = request.args.get('T', default='0')
-            pourcentage = request.args.get('pourcentage', default='0')
+            pourcentage_val = float(pourcentage)
+        except Exception:
+            pourcentage_val = 0
 
-            # Création d'une image simple
-            largeur, hauteur = 500, 300
-            image = Image.new('RGB', (largeur, hauteur), color=(255, 240, 245))  # fond rose clair
-            draw = ImageDraw.Draw(image)
+        largeur, hauteur = 1920, 1080
+        image = Image.new('RGB', (largeur, hauteur), color=(255, 240, 245))
+        draw = ImageDraw.Draw(image)
 
-            # Charger une police système basique
-            try:
-                font_titre = ImageFont.truetype("arial.ttf", 40)
-                font_score = ImageFont.truetype("arial.ttf", 60)
-                font_pourcent = ImageFont.truetype("arial.ttf", 40)
-            except IOError:
-                font_titre = ImageFont.load_default()
-                font_score = ImageFont.load_default()
-                font_pourcent = ImageFont.load_default()
+        # Charger police DejaVuSans si dispo, sinon défaut
+        try:
+            font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            font_titre = ImageFont.truetype(font_path, 100)
+            font_label = ImageFont.truetype(font_path, 60)
+            font_valeur = ImageFont.truetype(font_path, 120)
+            font_phrase = ImageFont.truetype(font_path, 50)
+        except IOError:
+            font_titre = font_label = font_valeur = font_phrase = ImageFont.load_default()
 
-            # Texte
-            texte_titre = "Score TANA"
-            texte_score = f"{t_score}"
-            texte_pourcentage = f"{pourcentage}%"
-
-            # Centrer les textes (utilise textbbox pour compatibilité Pillow moderne)
-            w_titre = draw.textbbox((0, 0), texte_titre, font=font_titre)[2]
-            w_score = draw.textbbox((0, 0), texte_score, font=font_score)[2]
-            w_pourcent = draw.textbbox((0, 0), texte_pourcentage, font=font_pourcent)[2]
-
-            draw.text(((largeur - w_titre) / 2, 40), texte_titre, fill="purple", font=font_titre)
-            draw.text(((largeur - w_score) / 2, 110), texte_score, fill="darkred", font=font_score)
-            draw.text(((largeur - w_pourcent) / 2, 200), texte_pourcentage, fill="purple", font=font_pourcent)
-
-            # Enregistrer en mémoire
-            buf = BytesIO()
-            image.save(buf, format="PNG")
-            buf.seek(0)
-
-            return send_file(buf, mimetype='image/png', as_attachment=True, download_name='score_tana.png')
+        # Ajouter logo en haut à gauche
+        try:
+            logo_path = os.path.join("static", "logo.png")
+            logo = Image.open(logo_path).convert("RGBA")
+            logo.thumbnail((300, 300))
+            image.paste(logo, (50, 50), logo)
         except Exception as e:
-            print("Erreur lors de la génération de l'image :", e)
-            return "Erreur interne lors de la génération de l'image.", 500
+            print("Logo non trouvé ou erreur d'insertion :", e)
+
+        # Titre "Score TANA" centré, souligné
+        texte_titre = "Score TANA"
+        w_titre = draw.textbbox((0, 0), texte_titre, font=font_titre)[2]
+        draw.text(((largeur - w_titre) / 2, 80), texte_titre, fill="purple", font=font_titre)
+        # Soulignement
+        draw.line(((largeur - w_titre) / 2, 200, (largeur + w_titre) / 2, 200), fill="purple", width=5)
+
+        # Bloc "Score brut" encadré sombrement
+        label_score = "Score brut"
+        val_score = str(t_score)
+        w_label = draw.textbbox((0, 0), label_score, font=font_label)[2]
+        w_val = draw.textbbox((0, 0), val_score, font=font_valeur)[2]
+        x_center = largeur // 2
+
+        # Label
+        draw.text((x_center - w_label / 2, 250), label_score, fill="black", font=font_label)
+        # Encadré sombre
+        rect_y0 = 330
+        rect_y1 = 480
+        rect_x0 = x_center - w_val / 2 - 30
+        rect_x1 = x_center + w_val / 2 + 30
+        draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="black")
+        draw.text((x_center - w_val / 2, 340), val_score, fill="white", font=font_valeur)
+
+        # Bloc "Pourcentage" encadré sombrement
+        label_pct = "Pourcentage"
+        val_pct = f"{pourcentage}%"
+        w_label2 = draw.textbbox((0, 0), label_pct, font=font_label)[2]
+        w_val2 = draw.textbbox((0, 0), val_pct, font=font_valeur)[2]
+        # Label
+        draw.text((x_center - w_label2 / 2, 530), label_pct, fill="black", font=font_label)
+        # Encadré sombre
+        rect2_y0 = 610
+        rect2_y1 = 760
+        rect2_x0 = x_center - w_val2 / 2 - 30
+        rect2_x1 = x_center + w_val2 / 2 + 30
+        draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="black")
+        draw.text((x_center - w_val2 / 2, 620), val_pct, fill="white", font=font_valeur)
+
+        # Phrase personnalisée en bas selon le score
+        if pourcentage_val >= 90:
+            phrase = "Tu es un champion du TANA."
+        elif pourcentage_val >= 70:
+            phrase = "Tu t'en sors très bien."
+        elif pourcentage_val >= 50:
+            phrase = "Tu es dans la moyenne."
+        elif pourcentage_val >= 30:
+            phrase = "Tu pourrais faire mieux..."
+        else:
+            phrase = "On va devoir avoir une conversation."
+
+        w_phrase = draw.textbbox((0, 0), phrase, font=font_phrase)[2]
+        draw.text(((largeur - w_phrase) / 2, 900), phrase, fill="darkblue", font=font_phrase)
+
+        # Enregistrer en mémoire
+        buf = BytesIO()
+        image.save(buf, format="PNG")
+        buf.seek(0)
+
+        return send_file(buf, mimetype='image/png', as_attachment=True, download_name='score_tana.png')
     except Exception as e:
-        print("Erreur inattendue dans la route /telecharger_image :", e)
-        return "Erreur interne inattendue lors de la génération de l'image.", 500
+        print("Erreur lors de la génération de l'image :", e)
+        return "Erreur interne lors de la génération de l'image.", 500
