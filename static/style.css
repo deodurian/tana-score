@@ -342,12 +342,25 @@ form#tanaForm {
 }
 /* Style visuel clair pour la div #result-block capturée par html2canvas */
 #result-block {
-  background-color: #1a1a1a;
-  padding: 40px;
+  background-color: #222;
+  padding: 50px;
   color: white;
   border-radius: 16px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
   margin: 0 auto;
   max-width: 800px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.result-card h1,
+.result-card .score-brut,
+.result-card .pourcentage,
+.message-resultat {
+  color: #fff !important;
+  text-shadow: 0 0 5px #ff69b4;
 }

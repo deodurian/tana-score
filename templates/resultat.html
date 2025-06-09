@@ -14,8 +14,9 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
-  <div id="result-block" class="fade-in">
-    <div class="result-card">
+  <div id="result-block" class="fade-in" style="display: flex; flex-direction: column; align-items: center;">
+
+    <div class="result-card" style="max-width: 600px; width: 100%;">
       <h1>Voici ton résultat : </h1>
 
       {% if T is not none %}
@@ -44,27 +45,42 @@
       {% endif %}
 
       <a class="back-link" href="/">↩ Revenir au formulaire</a>
-    </div>
-  </div>
 
-  <div class="action-buttons" style="margin-top: 20px; text-align: center;">
-    <button onclick="downloadResult()">📥 Télécharger mon score</button>
-    <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
+      <div class="action-buttons" style="margin-top: 20px; text-align: center;">
+        <button id="download-btn">📥 Télécharger mon score</button>
+        <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
+      </div>
+    </div>
   </div>
 
   <script>
     function downloadResult() {
       const resultBlock = document.getElementById('result-block');
+      
+      // Appliquer un fond temporaire blanc et padding pour la capture
+      resultBlock.style.backgroundColor = '#fff';
+      resultBlock.style.padding = '20px';
+      resultBlock.style.borderRadius = '12px';
+
       html2canvas(resultBlock, {
-        backgroundColor: '#1a1a1a',
-        scale: 2
+        backgroundColor: null,
+        scale: 3,
+        scrollX: 0,
+        scrollY: -window.scrollY
       }).then(canvas => {
         const link = document.createElement('a');
         link.download = 'TANA_resultat.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
+
+        // Revenir au style original
+        resultBlock.style.backgroundColor = '';
+        resultBlock.style.padding = '';
+        resultBlock.style.borderRadius = '';
       });
     }
+
+    document.getElementById('download-btn').addEventListener('click', downloadResult);
   </script>
 </body>
 </html>
