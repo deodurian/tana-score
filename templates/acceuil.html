@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bienvenue | Tana Score</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='tana logo.png') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='tana logo.png') }}"
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <style>
     .container.accueil {
       display: flex;
@@ -31,18 +32,49 @@
     .btn-start:hover {
       background-color: #ff85c1;
     }
-</style>
+
+    /* Header logo */
+    .site-header {
+      width: 100%;
+      padding: 10px 20px;
+      text-align: center;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .site-logo {
+      max-height: 50px;
+      height: auto;
+      width: auto;
+    }
+
+    /* Cacher les barres roses sur mobile */
+    @media screen and (max-width: 768px) {
+      .barre-rose {
+        display: none !important;
+      }
+    }
+  </style>
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZRCSWGT0BK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
 
-    gtag('config', 'G-ZRCSWGT0BK');
+    gtag("config", "G-ZRCSWGT0BK");
   </script>
 </head>
 <body>
+  <header class="site-header">
+    <img src="{{ url_for('static', filename='tana_logo_noir.png') }}" alt="Logo TANA" class="site-logo"
+    />
+  </header>
+
   <div class="container accueil">
     <h1>Bienvenue sur Tana Score</h1>
     <p>Découvre ton score en répondant à quelques questions !</p>

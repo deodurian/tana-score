@@ -193,6 +193,7 @@ window.onload = () => {
   showFirstVisibleQuestion();
 };
 
+
 document.querySelectorAll('.button-radio').forEach(button => {
   button.addEventListener('click', () => {
     const name = button.name;
@@ -200,4 +201,36 @@ document.querySelectorAll('.button-radio').forEach(button => {
     group.forEach(b => b.classList.remove('selected-button'));
     button.classList.add('selected-button');
   });
+});
+
+// Ajout du gestionnaire d'événements pour la touche "Entrée"
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // Empêche la soumission du formulaire
+
+    // Trouver la question visible
+    let currentIndex = -1;
+    questions.forEach((q, i) => {
+      if (q.style.display !== 'none') currentIndex = i;
+    });
+
+    if (currentIndex === -1) return; // Aucune question visible
+
+    // Vérifier si la réponse est valide
+    const question = questions[currentIndex];
+    let valid = false;
+    const inputs = question.querySelectorAll('input');
+
+    for (const input of inputs) {
+      if ((input.type === 'radio' && input.checked) ||
+          ((input.type === 'text' || input.type === 'number') && input.value.trim() !== '')) {
+        valid = true;
+        break;
+      }
+    }
+
+    if (valid) {
+      playAndNext(currentIndex);
+    }
+  }
 });

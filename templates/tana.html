@@ -19,6 +19,10 @@
     </script>
 </head>
 <body>
+<header class="site-header">
+  <img src="{{ url_for('static', filename='tana_logo_noir.png') }}" alt="Logo TANA" class="site-logo" />
+</header>
+
 <!-- Liserés roses gauche -->
 <div class="liseres left-1"></div>
 <div class="liseres left-2"></div>
@@ -250,6 +254,31 @@
 <audio id="ding" src="{{ url_for('static', filename='ding.mp3') }}"></audio>
 
 <script src="{{ url_for('static', filename='form.js') }}"></script>
+
+</body>
+<style>
+  /* Style du header logo */
+  .site-header {
+    width: 100%;
+    padding: 10px 20px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  .site-logo {
+    max-height: 50px;
+    height: auto;
+    width: auto;
+  }
+
+  /* Cacher les liserés roses sur mobile */
+  @media screen and (max-width: 768px) {
+    .liseres {
+      display: none !important;
+    }
+  }
+</style>
 
 </body>
 </html>
