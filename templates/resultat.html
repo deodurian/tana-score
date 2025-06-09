@@ -18,7 +18,7 @@
       <h1>Voici ton résultat : </h1>
 
       {% if T is not none %}
-        <p class="score-brut"><strong>Score brut :</strong> {{ T }}</p>
+        <p class="score-brut"><strong>Score brut :</strong> {{ T | round }}</p>
         {% if T <= 10 %}
           <p class="message-resultat">Bravo à toi, tu n'es pas une tana.</p>
         {% elif T <= 30 %}
@@ -39,7 +39,7 @@
       {% endif %}
 
       {% if pourcentage is not none %}
-        <p class="pourcentage"><strong>Pourcentage de Tana :</strong> {{ pourcentage }} %</p>
+        <p class="pourcentage"><strong>Pourcentage de Tana :</strong> {{ pourcentage | round }} %</p>
       {% endif %}
 
       <a class="back-link" href="/">↩ Revenir au formulaire</a>

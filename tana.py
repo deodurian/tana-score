@@ -252,6 +252,14 @@ def telecharger_image():
         # Créer fond uni
         fond = Image.new('RGBA', (largeur, hauteur), "#fcaec0")
 
+        # Ajouter image décorative par-dessus le fond rose
+        try:
+            decor_path = os.path.join('static', 'tana logo noir.png')
+            decor = Image.open(decor_path).convert("RGBA").resize((largeur, hauteur))
+            fond.paste(decor, (0, 0), decor)
+        except Exception as e:
+            print("Erreur chargement décor :", e)
+
         # Ajouter image de fond
         image_path = os.path.join('static', 'tana logo chrome rose.webp')
         try:
@@ -291,7 +299,7 @@ def telecharger_image():
 
         # Score brut
         label_score = "Score brut"
-        val_score = str(t_score)
+        val_score = f"{float(t_score):.1f}"
         w_label = draw.textbbox((0, 0), label_score, font=font_label)[2]
         w_val = draw.textbbox((0, 0), val_score, font=font_valeur)[2]
 
