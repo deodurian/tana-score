@@ -247,18 +247,10 @@ def telecharger_image():
         except Exception:
             pourcentage_val = 0
 
-        # Créer un fond rose (carré 1080x1080)
-        background = Image.new('RGBA', (1080, 1080), "#fcaec0")
-
-        # Charger et redimensionner l'image de fond (carré 1080x1080)
-        image_path = os.path.join('static', 'tana logo chrome rose.webp')
-        image = Image.open(image_path).convert("RGBA").resize((1080, 1080))
-
-        # Fusionner sur fond
-        background.paste(image, (0, 0), image)
-
-        # Utiliser le fond final comme base de travail
-        image = background
+        # Charger l'image de fond à partir de static/image.png
+        from PIL import Image
+        image_path = os.path.join('static', 'image.png')
+        image = Image.open(image_path).convert("RGBA")
         largeur, hauteur = image.size
         draw = ImageDraw.Draw(image)
 
@@ -274,7 +266,7 @@ def telecharger_image():
 
         # Ajouter logo en haut à gauche
         try:
-            logo_path = os.path.join("static", "tana logo noir.png")
+            logo_path = os.path.join("static", "tana logo.png")
             logo = Image.open(logo_path).convert("RGBA")
             logo.thumbnail((300, 300))
             image.paste(logo, (50, 50), logo)
@@ -327,7 +319,6 @@ def telecharger_image():
             t_score_val = float(t_score)
         except:
             t_score_val = 0
-        t_score_val = max(t_score_val, 0)
 
         if t_score_val <= 10:
             phrase = "Bravo à toi, tu n'es pas une tana."
@@ -341,10 +332,8 @@ def telecharger_image():
             phrase = "On rentre dans une catégorie de tana qui nous dépasse."
         elif t_score_val <= 1000:
             phrase = "Tu vis pour t’amuser. Une vie de péché."
-        elif t_score_val > 1000:
-            phrase = "On a dépassé les limites humaines… consulte un psy peut-être 😅"
         else:
-            phrase = "Score invalide. Recommence le quiz."
+            phrase = "On a dépassé les limites humaines… consulte un psy peut-être 😅"
 
         w_phrase = draw.textbbox((0, 0), phrase, font=font_phrase)[2]
         draw.text(((largeur - w_phrase) / 2, 900), phrase, fill="purple", font=font_phrase)
