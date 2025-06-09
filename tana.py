@@ -254,7 +254,7 @@ def telecharger_image():
 
         # Ajouter image décorative par-dessus le fond rose
         try:
-            decor_path = os.path.join('static', 'tana logo noir.png')
+            decor_path = os.path.join('static', 'tana logo.png')
             decor = Image.open(decor_path).convert("RGBA").resize((largeur, hauteur))
             fond.paste(decor, (0, 0), decor)
         except Exception as e:
@@ -284,7 +284,7 @@ def telecharger_image():
         try:
             logo_path = os.path.join("static", "tana logo noir.png")
             logo = Image.open(logo_path).convert("RGBA")
-            logo.thumbnail((200, 200))
+            logo.thumbnail((120, 120))
             fond.paste(logo, (40, 40), logo)
         except Exception as e:
             print("Logo introuvable :", e)
