@@ -285,13 +285,13 @@ def telecharger_image():
         x_center = largeur // 2
 
         # Label
-        draw.text((x_center - w_label / 2, 250), label_score, fill="darkpink", font=font_label)
+        draw.text((x_center - w_label / 2, 250), label_score, fill="pink", font=font_label)
         # Encadré sombre
         rect_y0 = 330
         rect_y1 = 480
         rect_x0 = x_center - w_val / 2 - 30
         rect_x1 = x_center + w_val / 2 + 30
-        draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="darkpink")
+        draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="pink")
         draw.text((x_center - w_val / 2, 340), val_score, fill="purple", font=font_valeur)
 
         # Bloc "Pourcentage" encadré sombrement
@@ -300,13 +300,13 @@ def telecharger_image():
         w_label2 = draw.textbbox((0, 0), label_pct, font=font_label)[2]
         w_val2 = draw.textbbox((0, 0), val_pct, font=font_valeur)[2]
         # Label
-        draw.text((x_center - w_label2 / 2, 530), label_pct, fill="darkpink", font=font_label)
+        draw.text((x_center - w_label2 / 2, 530), label_pct, fill="pink", font=font_label)
         # Encadré sombre
         rect2_y0 = 610
         rect2_y1 = 760
         rect2_x0 = x_center - w_val2 / 2 - 30
         rect2_x1 = x_center + w_val2 / 2 + 30
-        draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="darkpink")
+        draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="pink")
         draw.text((x_center - w_val2 / 2, 620), val_pct, fill="purple", font=font_valeur)
 
         # Phrase personnalisée en bas selon le score
