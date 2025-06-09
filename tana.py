@@ -247,12 +247,12 @@ def telecharger_image():
         except Exception:
             pourcentage_val = 0
 
-        # Créer un fond rose
-        background = Image.new('RGBA', (1920, 1080), "#fcaec0")
+        # Créer un fond rose (carré 1080x1080)
+        background = Image.new('RGBA', (1920, 1920), "#fcaec0")
 
-        # Charger et redimensionner l'image
+        # Charger et redimensionner l'image (carré 1080x1080)
         image_path = os.path.join('static', 'tana logo chrome rose.webp')
-        image = Image.open(image_path).convert("RGBA").resize((1920, 1080))
+        image = Image.open(image_path).convert("RGBA").resize((1920, 1920))
 
         # Fusionner sur fond
         background.paste(image, (0, 0), image)
@@ -274,7 +274,7 @@ def telecharger_image():
 
         # Ajouter logo en haut à gauche
         try:
-            logo_path = os.path.join("static", "tana logo.png")
+            logo_path = os.path.join("static", "tana logo noir.png")
             logo = Image.open(logo_path).convert("RGBA")
             logo.thumbnail((300, 300))
             image.paste(logo, (50, 50), logo)
