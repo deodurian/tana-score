@@ -263,7 +263,7 @@ def telecharger_image():
 
         # Ajouter logo en haut à gauche
         try:
-            logo_path = os.path.join("static", "logo.png")
+            logo_path = os.path.join("static", "tana logo.png")
             logo = Image.open(logo_path).convert("RGBA")
             logo.thumbnail((300, 300))
             image.paste(logo, (50, 50), logo)
@@ -285,14 +285,14 @@ def telecharger_image():
         x_center = largeur // 2
 
         # Label
-        draw.text((x_center - w_label / 2, 250), label_score, fill="black", font=font_label)
+        draw.text((x_center - w_label / 2, 250), label_score, fill="darkpink", font=font_label)
         # Encadré sombre
         rect_y0 = 330
         rect_y1 = 480
         rect_x0 = x_center - w_val / 2 - 30
         rect_x1 = x_center + w_val / 2 + 30
-        draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="black")
-        draw.text((x_center - w_val / 2, 340), val_score, fill="white", font=font_valeur)
+        draw.rectangle([rect_x0, rect_y0, rect_x1, rect_y1], fill="darkpink")
+        draw.text((x_center - w_val / 2, 340), val_score, fill="purple", font=font_valeur)
 
         # Bloc "Pourcentage" encadré sombrement
         label_pct = "Pourcentage"
@@ -300,14 +300,14 @@ def telecharger_image():
         w_label2 = draw.textbbox((0, 0), label_pct, font=font_label)[2]
         w_val2 = draw.textbbox((0, 0), val_pct, font=font_valeur)[2]
         # Label
-        draw.text((x_center - w_label2 / 2, 530), label_pct, fill="black", font=font_label)
+        draw.text((x_center - w_label2 / 2, 530), label_pct, fill="darkpink", font=font_label)
         # Encadré sombre
         rect2_y0 = 610
         rect2_y1 = 760
         rect2_x0 = x_center - w_val2 / 2 - 30
         rect2_x1 = x_center + w_val2 / 2 + 30
-        draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="black")
-        draw.text((x_center - w_val2 / 2, 620), val_pct, fill="white", font=font_valeur)
+        draw.rectangle([rect2_x0, rect2_y0, rect2_x1, rect2_y1], fill="darkpink")
+        draw.text((x_center - w_val2 / 2, 620), val_pct, fill="purple", font=font_valeur)
 
         # Phrase personnalisée en bas selon le score
         try:
@@ -331,7 +331,7 @@ def telecharger_image():
             phrase = "On a dépassé les limites humaines… consulte un psy peut-être 😅"
 
         w_phrase = draw.textbbox((0, 0), phrase, font=font_phrase)[2]
-        draw.text(((largeur - w_phrase) / 2, 900), phrase, fill="darkblue", font=font_phrase)
+        draw.text(((largeur - w_phrase) / 2, 900), phrase, fill="purple", font=font_phrase)
 
         # Enregistrer en mémoire
         buf = BytesIO()
