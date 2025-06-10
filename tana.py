@@ -348,3 +348,8 @@ def telecharger_image():
     except Exception as e:
         print("Erreur génération image :", e)
         return "Erreur lors de la génération de l'image", 500
+
+# --- Route crédit ---
+@app.route('/credit')
+def credit():
+    return render_template('credit.html')
