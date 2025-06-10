@@ -34,19 +34,20 @@
     }
 
     /* Header logo */
-    .site-header {
-      width: 100%;
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
       padding: 10px 20px;
-      text-align: center;
-      background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
     }
 
     .site-logo {
-      max-height: 50px;
-      height: auto;
+      height: 40px;
       width: auto;
+    }
+
+    .page-header h1 {
+      margin: 0;
     }
 
     /* Cacher les barres roses sur mobile */
@@ -70,9 +71,9 @@
   </script>
 </head>
 <body>
-  <header class="site-header">
-    <img src="{{ url_for('static', filename='tana logo.png') }}" alt="Logo TANA" class="site-logo"
-    />
+  <header class="page-header">
+    <img src="{{ url_for('static', filename='tana logo.png') }}" alt="Logo TANA" class="site-logo" />
+    <h1>Bienvenue sur Tana Score</h1>
   </header>
 
   <div class="container accueil">

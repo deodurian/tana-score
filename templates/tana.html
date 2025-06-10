@@ -19,9 +19,6 @@
     </script>
 </head>
 <body>
-<header class="site-header">
-  <img src="{{ url_for('static', filename='tana logo.png') }}" alt="Logo TANA" class="site-logo" />
-</header>
 
 <!-- Liserés roses gauche -->
 <div class="liseres left-1"></div>
@@ -33,7 +30,8 @@
 <div class="liseres right-2"></div>
 <div class="liseres right-3"></div>
 
-<header>
+<header class="page-header">
+  <img src="{{ url_for('static', filename='tana logo.png') }}" alt="Logo TANA" class="site-logo" />
   <h1 class="titre-principal">Salut les Tana !!!</h1>
 </header>
 
@@ -257,18 +255,15 @@
 
 </body>
 <style>
-  /* Style du header logo */
-  .site-header {
-    width: 100%;
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
     padding: 10px 20px;
-    text-align: center;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
   }
+
   .site-logo {
-    max-height: 50px;
-    height: auto;
+    height: 40px;
     width: auto;
   }
 
