@@ -364,3 +364,72 @@ form#tanaForm {
   color: #fff !important;
   text-shadow: 0 0 5px #ff69b4;
 }
+/* ====== Header global avec logo ====== */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 20px;
+}
+
+.site-logo {
+  height: 80px;
+  width: auto;
+  margin-left: 40px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+/* ====== Page d'accueil ====== */
+.container.accueil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container.accueil h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.container.accueil p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.btn-start {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 18px;
+  background-color: #ff69b4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.btn-start:hover {
+  background-color: #ff85c1;
+}
+
+/* ====== Résultat - titre principal intégré au header ====== */
+.titre-principal {
+  font-size: 2.5rem;
+  margin: 0;
+  padding-left: 10px;
+}
+
+/* ====== Responsive : cacher les barres roses sur mobile ====== */
+@media screen and (max-width: 768px) {
+  .barre-rose,
+  .liseres {
+    display: none !important;
+  }
+}
