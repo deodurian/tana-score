@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "tana-461711",
+  "private_key_id": "d81eb85d76fbfeb37dc00ff2d5ca8b676c3a01d8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCtsj62nNy0on7J\nSdu5lRCrEhu8Zc9Gyp0n/SBOsddBEwOlL9D1Gf+qmpQJinjVTk3QH7YHKSMYBUu7\nXLLJNBKI1csYyldqIssDbN3SOb6QlSnW1v36RkZuJka7rFzDxum7920RvjoGgwaX\npf4aKL2mp89jV0cr5JnT881AAne0YtD0lqpN9lb55MncLFd2+08ajBJCFqzAd8W4\nX1y3PGA3GQaDJ0sIP+AJIbutvJ9TWTB7u3Z7ufgXmh7J7346i8H9+z+0KURZaBdf\nM+Ov4Ub+Cl6IyOCWnAqQW8Vy/okT1AkV3WDh1QW71iCP2xlAj1D+eF9ZQQ4zmEO8\nSXVQ28Y3AgMBAAECgf8G1tTo/6qSU4G0vTPAqkbfBOHAxrxYXycYqW410/4B7hnk\nuRv8D8JTR0f9kw/SxvCbVcMIR7UaCdOp3t3PIs0dJYtUjUbj3LhKnW9mM9We+n4H\naDJF+mnqPk/m1mex8ZO9WBUwxp6g/yuVM27iZZmM9lY+X+m1LOS4u3AmSESC1bcF\n3TI1bCHlDhq1ywmaOLXHqH6p81id2ngyTNhrNz/TEXFs/eR6U9S/Ofm4ZjP/VL2W\nE1LeHuWPbYxcKm0g0ydukorl3L+E13rY8MApNbzBVg6OsUXFpAxIpSEtotRKjrRV\nMwxDjQEsOSubQ3X9uWufQNd0nJBtK97JWPGB9MECgYEA13dncOgtpfb/NXqa5zzJ\nq0PHeRCHab8R1xfYSOTkpz85nrg84oW4D+nTzPPhdqMri1BCQAZ10WCg2WmPLX47\nGCM3zpbKUV/ijGpobiAWYO6ZUP3fbaPJwB+91V9qOH8R33JUqNGpdmTuzDr0HB8/\nzJOzpTF0dIkswTDG/B0UNpkCgYEAzl89+pkfhWbFGE/a5Sp48QI9nzyZKnEnzuJQ\nLDpwZ7DTh/Kqc/LJHHQxbQe0eAMe94Z+jDgzyTrrVvPUeQQo/LsbdGhsAKiChqka\nvy09Oj9aZZRTWvYJp8iqzfX5tfuzCN7dhrXKVFQpym50g96jituw0tIhbwyQrD/i\nutnjdU8CgYB25ze4QQhf3Aw+MOimzw7jakX78zknDAAGWOxMXbQo72UWx8khoHVQ\notL0+WjklWsEOEg3GNmPr+lT0ULn8g8eZOD5KpF/kpBsuJPkoeR3nXQSE+dmk8pU\nMbAKvdraTpVIX8mEWB9SbKSzI51un3gPpzqt4LrJTKHcAtTscAelkQKBgHKr+YSG\nET3PHTWlKbytHQbOd+9DfNhYiAYtOt9YmZ0EZIXmEVDcV2O4LL6oyV7mXQ6tbSP9\nFsl6M8rdMfMMnLnSPi8w1tKG0ACDdplESgFTsqc/BBJHJJZWqpJHW7oDYjhLnkx8\nNzEkkxQozBV6YOWHrXl3yZwrHziXRyUMbZeBAoGBAMgwd33UO6OfPW6rRgAxG46m\nlVkv9gaDzN7Avfo0+4nkaIp5cJeIyG4UvBreNlgIvpqvQWHZobbOi+xm1GomGfPC\nHSfOXnCf30XLQNFd/HS5Rk8bfJNJ01NXBWbQsrCgjVfbpb7wjd7I1d9Ht+hJvGXR\nCRiM4AZbgSBFunOxDk90\n-----END PRIVATE KEY-----\n",
+  "client_email": "tanascore@tana-461711.iam.gserviceaccount.com",
+  "client_id": "115457437837572099541",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tanascore%40tana-461711.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

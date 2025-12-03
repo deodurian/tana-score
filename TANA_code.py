@@ -39,7 +39,7 @@ def calculer_T(donnees):
         date = 0
 
     try:
-        age_vieux = int(donnees.get("age_vieux", 0)) if bodyc != 0 else 0
+        age_vieux = int(donnees.get("age_plus_vieux", 0)) if bodyc != 0 else 0
     except (ValueError, TypeError):
         age_vieux = 0
     try:
@@ -61,8 +61,20 @@ def calculer_T(donnees):
     ami = donnees["ami"]
     bz = donnees["bz"]
 
-    maquillage = donnees.get("maquillage")  # full/juste fond/eyeliner/creme
-    potes_vs_relation = donnees.get("potes_relation")  # 1/2/3/4
+    maquillage = donnees.get("maquillage")  # full/fond/eyeliner/creme
+    
+    # Mapper les valeurs textuelles de "laisser_potes" vers des valeurs numériques
+    laisser_potes_raw = donnees.get("laisser_potes", "")
+    if laisser_potes_raw == "oui_bien":
+        potes_vs_relation = "1"
+    elif laisser_potes_raw == "depend":
+        potes_vs_relation = "2"
+    elif laisser_potes_raw == "peut_etre":
+        potes_vs_relation = "3"
+    elif laisser_potes_raw == "non_potes_dabord":
+        potes_vs_relation = "4"
+    else:
+        potes_vs_relation = None
     # age_vieux already converted above
     demi_famille = donnees.get("demi_famille")  # oui/non
 
@@ -158,7 +170,7 @@ def calculer_T(donnees):
 
     if maquillage == "full":
         T += 5
-    elif maquillage == "juste fond":
+    elif maquillage == "fond":
         T += 3
     elif maquillage == "eyeliner":
         T += 1
