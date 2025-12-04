@@ -157,7 +157,7 @@ def validate_form(form):
 
 def get_stats(user_score=None):
     """
-    Calcule les statistiques globales depuis données.json
+    Calcule les statistiques globales depuis Google Sheets
     
     Retourne un dictionnaire avec:
     - total: nombre total de participants
@@ -165,7 +165,10 @@ def get_stats(user_score=None):
     - mediane: score médian
     - percentile: position de l'utilisateur (si user_score fourni)
     """
-    data = load_data()
+    from google_sheets_utils import get_all_data_from_sheets
+    
+    # Lire les données depuis Google Sheets au lieu de données.json
+    data = get_all_data_from_sheets()
     
     if not data:
         return {
@@ -179,7 +182,7 @@ def get_stats(user_score=None):
     scores = []
     for entry in data:
         try:
-            if 'T' in entry:
+            if 'T' in entry and entry['T']:
                 scores.append(float(entry['T']))
         except (ValueError, TypeError):
             continue
@@ -425,14 +428,17 @@ def dashboard(secret_token):
         
         if password == expected_password:
             # Mot de passe correct, afficher le dashboard
-            data = load_data()
+            from google_sheets_utils import get_all_data_from_sheets
+            
+            # Lire les données depuis Google Sheets
+            data = get_all_data_from_sheets()
             stats = get_stats()
             
             # Calculer distribution des scores
             scores = []
             for entry in data:
                 try:
-                    if 'T' in entry:
+                    if 'T' in entry and entry['T']:
                         scores.append(float(entry['T']))
                 except (ValueError, TypeError):
                     continue
