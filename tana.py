@@ -28,8 +28,7 @@ def save_data(new_entry):
 
 # --- Routes ---
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+
 
 @app.route("/")
 def accueil():
@@ -190,3 +189,5 @@ def telecharger_image():
 @app.route('/credit')
 def credit():
     return render_template('credit.html')
+if __name__ == '__main__':
+    app.run(debug=True, port=5002)
