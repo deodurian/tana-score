@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>  
-  
-  <meta charset="UTF-8">                        
+
+<head>
+
+  <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tana Score</title>                 
+  <title>Tana Score</title>
   <!-- Lien vers une feuille de styles externe -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <!-- Favicon (petite icône dans l’onglet) -->
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='tana logo.png') }}">  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='tana logo.png') }}">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
+
 <body>
   <header class="page-header">
     <img src="{{ url_for('static', filename='tana logo.png') }}" alt="Logo TANA" class="site-logo" />
@@ -21,31 +24,60 @@
       <h1>Voici ton résultat : </h1>
 
       {% if T is not none %}
-        <p class="score-brut"><strong>Score brut :</strong> {{ T | round }}</p>
-        {% if T <= 10 %}
-          <p class="message-resultat">Bravo à toi, tu n'es pas une tana.</p>
-        {% elif T <= 30 %}
-          <p class="message-resultat">Aïe… c’est pas que tu es une tana, c’est que tu aimes bien t’amuser.</p>
-        {% elif T <= 80 %}
-          <p class="message-resultat">Oula, on a affaire à une tana timide, mais une tana quand même.</p>
-        {% elif T <= 220 %}
-          <p class="message-resultat">Une tana moyenne.</p>
-        {% elif T <= 500 %}
-          <p class="message-resultat">On rentre dans une catégorie de tana qui nous dépasse.</p>
-        {% elif T <= 1000 %}
-          <p class="message-resultat">Tu vis pour t’amuser. Une vie de péché.</p>
-        {% else %}
-          <p class="message-resultat">On a dépassé les limites humaines… consulte un psy peut-être 😅</p>
-        {% endif %}
-      {% else %}
-        <p>Aucun score n’a été calculé.</p>
-      {% endif %}
+      <p class="score-brut"><strong>Score brut :</strong> {{ T | round }}</p>
+      {% if T <= 10 %} <p class="message-resultat">Bravo à toi, tu n'es pas une tana.</p>
+        {% elif T <= 30 %} <p class="message-resultat">Aïe… c’est pas que tu es une tana, c’est que tu aimes bien
+          t’amuser.</p>
+          {% elif T <= 80 %} <p class="message-resultat">Oula, on a affaire à une tana timide, mais une tana quand même.
+            </p>
+            {% elif T <= 220 %} <p class="message-resultat">Une tana moyenne.</p>
+              {% elif T <= 500 %} <p class="message-resultat">On rentre dans une catégorie de tana qui nous dépasse.</p>
+                {% elif T <= 1000 %} <p class="message-resultat">Tu vis pour t’amuser. Une vie de péché.</p>
+                  {% else %}
+                  <p class="message-resultat">On a dépassé les limites humaines… consulte un psy peut-être 😅</p>
+                  {% endif %}
+                  {% else %}
+                  <p>Aucun score n’a été calculé.</p>
+                  {% endif %}
 
-      {% if pourcentage is not none %}
-        <p class="pourcentage"><strong>Pourcentage de Tana :</strong> {{ pourcentage | round }} %</p>
-      {% endif %}
+                  {% if pourcentage is not none %}
+                  <p class="pourcentage"><strong>Pourcentage de Tana :</strong> {{ pourcentage | round }} %</p>
+                  {% endif %}
 
-      <a class="back-link" href="/">↩ Revenir au formulaire</a>
+                  <!-- Comparaison avec la moyenne -->
+                  {% if stats and stats.total > 0 %}
+                  <div class="stats-comparison"
+                    style="margin-top: 30px; padding: 20px; background-color: #1c1c1c; border-radius: 12px; border-left: 4px solid #ff69b4;">
+                    <h3 style="color: #ff69b4; margin-bottom: 15px; font-size: 1.3rem;">📊 Comparaison</h3>
+
+                    <p style="margin: 10px 0; font-size: 1.1rem;">
+                      <strong>Ton score :</strong> {{ T | round }}
+                      <span style="color: #888;">|</span>
+                      <strong>Moyenne générale :</strong> {{ stats.moyenne }}
+                    </p>
+
+                    {% if T > stats.moyenne %}
+                    <p style="color: #ff6b6b; font-size: 1.05rem; margin-top: 10px;">
+                      🔥 Tu es au-dessus de la moyenne ! (+{{ (T - stats.moyenne) | round(1) }} points)
+                    </p>
+                    {% elif T < stats.moyenne %} <p style="color: #51cf66; font-size: 1.05rem; margin-top: 10px;">
+                      ✨ Tu es en dessous de la moyenne ! ({{ (stats.moyenne - T) | round(1) }} points de moins)
+                      </p>
+                      {% else %}
+                      <p style="color: #ffd43b; font-size: 1.05rem; margin-top: 10px;">
+                        🎯 Tu es pile dans la moyenne !
+                      </p>
+                      {% endif %}
+
+                      <p style="margin-top: 15px; color: #aaa; font-size: 0.95rem;">
+                        Tu es dans le <strong style="color: #ff69b4;">top {{ 100 - stats.percentile | round }}%</strong>
+                        <span style="color: #666;">•</span>
+                        {{ stats.total }} participant{{ 's' if stats.total > 1 else '' }} au total
+                      </p>
+                  </div>
+                  {% endif %}
+
+                  <a class="back-link" href="/">↩ Revenir au formulaire</a>
 
     </div>
   </div>
@@ -61,4 +93,5 @@
     <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
   </div>
 </body>
+
 </html>

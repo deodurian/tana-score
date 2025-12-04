@@ -26,6 +26,197 @@ def save_data(new_entry):
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
+# --- Validation des données ---
+
+def validate_form(form):
+    """
+    Valide toutes les données du formulaire côté serveur.
+    
+    POURQUOI C'EST IMPORTANT :
+    1. Sécurité : Empêche l'injection de données malveillantes
+    2. Intégrité : Garantit que les calculs sont corrects
+    3. Statistiques fiables : Évite les données aberrantes
+    
+    Retourne (is_valid, error_message)
+    """
+    errors = []
+    
+    # 1. CHAMPS OBLIGATOIRES - Doivent exister
+    required_fields = ['sexe', 'age', 'premier', 'date', 'ex', 'score', 'insta', 'abo', 
+                      'chien', 'ami', 'bz', 'demi_famille']
+    for field in required_fields:
+        if field not in form or form.get(field) == '':
+            errors.append(f"Le champ '{field}' est obligatoire")
+    
+    if errors:
+        return False, " | ".join(errors)
+    
+    # 2. VALIDATION DES CHAMPS NUMÉRIQUES
+    try:
+        age = int(form.get('age', 0))
+        if not (13 <= age <= 100):
+            errors.append("L'âge doit être entre 13 et 100 ans")
+    except ValueError:
+        errors.append("L'âge doit être un nombre")
+    
+    try:
+        premier = int(form.get('premier', 0))
+        if not (0 <= premier <= 100):
+            errors.append("L'âge de la première fois doit être entre 0 et 100")
+    except ValueError:
+        errors.append("L'âge de la première fois doit être un nombre")
+    
+    try:
+        date = int(form.get('date', 0))
+        if date < 0:
+            errors.append("Le nombre de dates ne peut pas être négatif")
+    except ValueError:
+        errors.append("Le nombre de dates doit être un nombre")
+    
+    try:
+        ex = int(form.get('ex', 0))
+        if ex < 0:
+            errors.append("Le nombre d'ex ne peut pas être négatif")
+    except ValueError:
+        errors.append("Le nombre d'ex doit être un nombre")
+    
+    try:
+        score = int(form.get('score', 0))
+        if score < 0:
+            errors.append("Le score Snap ne peut pas être négatif")
+    except ValueError:
+        errors.append("Le score Snap doit être un nombre")
+    
+    try:
+        insta = int(form.get('insta', 0))
+        if insta < 0:
+            errors.append("Les abonnés Instagram ne peuvent pas être négatifs")
+    except ValueError:
+        errors.append("Les abonnés Instagram doivent être un nombre")
+    
+    try:
+        abo = int(form.get('abo', 0))
+        if abo < 0:
+            errors.append("Les abonnements Instagram ne peuvent pas être négatifs")
+    except ValueError:
+        errors.append("Les abonnements Instagram doivent être un nombre")
+    
+    # Bodycount (optionnel si premier=0)
+    if form.get('bodyc'):
+        try:
+            bodyc = int(form.get('bodyc', 0))
+            if bodyc < 0:
+                errors.append("Le bodycount ne peut pas être négatif")
+        except ValueError:
+            errors.append("Le bodycount doit être un nombre")
+    
+    # Age plus vieux (optionnel)
+    if form.get('age_plus_vieux'):
+        try:
+            age_vieux = int(form.get('age_plus_vieux', 0))
+            if age_vieux < 0:
+                errors.append("L'âge ne peut pas être négatif")
+        except ValueError:
+            errors.append("L'âge de la personne la plus vieille doit être un nombre")
+    
+    # 3. VALIDATION DES CHOIX MULTIPLES
+    valid_choices = {
+        'sexe': ['h', 'f'],
+        'chien': ['c', 'b'],
+        'ami': ['f', 'g'],
+        'bz': ['o', 'n'],
+        'demi_famille': ['oui', 'non']
+    }
+    
+    for field, allowed_values in valid_choices.items():
+        if form.get(field) not in allowed_values:
+            errors.append(f"Valeur invalide pour '{field}'")
+    
+    # Champs conditionnels
+    if form.get('trompe') and form.get('trompe') not in ['oui', 'non']:
+        errors.append("Valeur invalide pour 'trompe'")
+    
+    if form.get('plaisir') and form.get('plaisir') not in ['oui', 'non']:
+        errors.append("Valeur invalide pour 'plaisir'")
+    
+    if form.get('refaire') and form.get('refaire') not in ['oui', 'non']:
+        errors.append("Valeur invalide pour 'refaire'")
+    
+    if form.get('maquillage') and form.get('maquillage') not in ['full', 'fond', 'eyeliner', 'creme']:
+        errors.append("Valeur invalide pour 'maquillage'")
+    
+    if form.get('laisser_potes') and form.get('laisser_potes') not in ['oui_bien', 'depend', 'peut_etre', 'non_potes_dabord']:
+        errors.append("Valeur invalide pour 'laisser_potes'")
+    
+    if errors:
+        return False, " | ".join(errors)
+    
+    return True, None
+
+# --- Statistiques ---
+
+def get_stats(user_score=None):
+    """
+    Calcule les statistiques globales depuis données.json
+    
+    Retourne un dictionnaire avec:
+    - total: nombre total de participants
+    - moyenne: score moyen
+    - mediane: score médian
+    - percentile: position de l'utilisateur (si user_score fourni)
+    """
+    data = load_data()
+    
+    if not data:
+        return {
+            'total': 0,
+            'moyenne': 0,
+            'mediane': 0,
+            'percentile': 0
+        }
+    
+    # Extraire tous les scores T
+    scores = []
+    for entry in data:
+        try:
+            if 'T' in entry:
+                scores.append(float(entry['T']))
+        except (ValueError, TypeError):
+            continue
+    
+    if not scores:
+        return {
+            'total': len(data),
+            'moyenne': 0,
+            'mediane': 0,
+            'percentile': 0
+        }
+    
+    # Calculer moyenne
+    moyenne = sum(scores) / len(scores)
+    
+    # Calculer médiane
+    scores_sorted = sorted(scores)
+    n = len(scores_sorted)
+    if n % 2 == 0:
+        mediane = (scores_sorted[n//2 - 1] + scores_sorted[n//2]) / 2
+    else:
+        mediane = scores_sorted[n//2]
+    
+    # Calculer percentile de l'utilisateur
+    percentile = 0
+    if user_score is not None:
+        # Combien de personnes ont un score inférieur ?
+        lower_count = sum(1 for s in scores if s < user_score)
+        percentile = (lower_count / len(scores)) * 100
+    
+    return {
+        'total': len(data),
+        'moyenne': round(moyenne, 1),
+        'mediane': round(mediane, 1),
+        'percentile': round(percentile, 0)
+    }
+
 # --- Routes ---
 
 
@@ -41,16 +232,41 @@ def quiz():
 @app.route('/submit', methods=['POST'])
 def submit():
     form = request.form
+    
+    # VALIDATION CÔTÉ SERVEUR - Étape critique !
+    is_valid, error_message = validate_form(form)
+    if not is_valid:
+        # Si les données sont invalides, afficher une page d'erreur
+        return render_template('error.html', error=error_message), 400
+    
+    # Les données sont valides, on peut continuer
     save_data(dict(form))
     t_score, pourcentage = calculer_T(dict(form))
-    try:
-        all_data = {key: form.get(key, "") for key in form.keys()}
-        all_data["T"] = t_score
-        all_data["pourcentage"] = pourcentage
-        enregistrer_dans_google_sheet(all_data)
-    except Exception as e:
-        print("Erreur envoi Google Sheets:", e)
-    return render_template('resultat.html', T=t_score, pourcentage=pourcentage)
+    
+    # Préparer les données pour Google Sheets
+    all_data = {key: form.get(key, "") for key in form.keys()}
+    all_data["T"] = t_score
+    all_data["pourcentage"] = pourcentage
+    
+    # Envoyer à Google Sheets en arrière-plan (non bloquant)
+    def send_to_sheets():
+        try:
+            enregistrer_dans_google_sheet(all_data)
+        except Exception as e:
+            print("Erreur envoi Google Sheets:", e)
+    
+    import threading
+    thread = threading.Thread(target=send_to_sheets)
+    thread.start()
+    
+    # Calculer les statistiques pour comparaison
+    stats = get_stats(user_score=t_score)
+    
+    # Afficher immédiatement les résultats avec les stats
+    return render_template('resultat.html', 
+                         T=t_score, 
+                         pourcentage=pourcentage,
+                         stats=stats)
 
 
 
@@ -184,6 +400,66 @@ def telecharger_image():
     except Exception as e:
         print("Erreur génération image :", e)
         return "Erreur lors de la génération de l'image", 500
+
+# --- Route Dashboard (Protégée) ---
+@app.route('/dashboard/<secret_token>', methods=['GET', 'POST'])
+def dashboard(secret_token):
+    """
+    Dashboard privé avec double sécurité:
+    1. URL secrète (secret_token)
+    2. Mot de passe
+    
+    Variables d'environnement requises:
+    - DASHBOARD_SECRET_URL: le token dans l'URL
+    - DASHBOARD_PASSWORD: le mot de passe
+    """
+    # Vérification 1: Token dans l'URL
+    expected_token = os.environ.get('DASHBOARD_SECRET_URL', 'change-me-in-production')
+    if secret_token != expected_token:
+        return "404 Not Found", 404  # Faire croire que la page n'existe pas
+    
+    # Vérification 2: Mot de passe
+    if request.method == 'POST':
+        password = request.form.get('password', '')
+        expected_password = os.environ.get('DASHBOARD_PASSWORD', 'admin123')
+        
+        if password == expected_password:
+            # Mot de passe correct, afficher le dashboard
+            data = load_data()
+            stats = get_stats()
+            
+            # Calculer distribution des scores
+            scores = []
+            for entry in data:
+                try:
+                    if 'T' in entry:
+                        scores.append(float(entry['T']))
+                except (ValueError, TypeError):
+                    continue
+            
+            # Grouper par tranches
+            distribution = {
+                '0-10': sum(1 for s in scores if s <= 10),
+                '11-30': sum(1 for s in scores if 10 < s <= 30),
+                '31-80': sum(1 for s in scores if 30 < s <= 80),
+                '81-220': sum(1 for s in scores if 80 < s <= 220),
+                '221-500': sum(1 for s in scores if 220 < s <= 500),
+                '501+': sum(1 for s in scores if s > 500)
+            }
+            
+            # 10 dernières soumissions
+            recent = data[-10:][::-1]  # Inverser pour avoir les plus récentes en premier
+            
+            return render_template('dashboard.html', 
+                                 stats=stats, 
+                                 distribution=distribution,
+                                 recent=recent,
+                                 total_scores=len(scores))
+        else:
+            return render_template('dashboard_login.html', error="Mot de passe incorrect")
+    
+    # GET request: afficher le formulaire de connexion
+    return render_template('dashboard_login.html', error=None)
 
 # --- Route crédit ---
 @app.route('/credit')

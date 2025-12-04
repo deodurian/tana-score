@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Connexion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background-color: #2c2c2c;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 25px rgba(255, 105, 180, 0.2);
+        }
+
+        .login-title {
+            color: #ff69b4;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background-color: #1c1c1c;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .login-form input[type="password"]:focus {
+            outline: none;
+            border-color: #ff69b4;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-form button:hover {
+            background-color: #ff4da6;
+        }
+
+        .error-message {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h1 class="login-title">🔒 Dashboard</h1>
+
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" class="login-form">
+                <input type="password" name="password" placeholder="Mot de passe" required autofocus>
+                <button type="submit">Accéder</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
