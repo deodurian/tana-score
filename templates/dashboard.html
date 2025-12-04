@@ -167,7 +167,8 @@
                     <span><strong>{{ count }}</strong> participant{{ 's' if count > 1 else '' }}</span>
                 </div>
                 <div class="bar">
-                    <div class="fill" style="width: {{ (count / total_scores * 100) if total_scores > 0 else 0 }}%">
+                    <div class="fill"
+                        style="width: {{ '%g%%' % ((count / total_scores * 100) if total_scores > 0 else 0) }}">
                     </div>
                 </div>
             </div>
