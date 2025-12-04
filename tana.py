@@ -31,27 +31,30 @@ def save_data(new_entry):
 def validate_form(form):
     """
     Valide toutes les données du formulaire côté serveur.
+    PREND EN COMPTE LES QUESTIONS CONDITIONNELLES.
     
     POURQUOI C'EST IMPORTANT :
     1. Sécurité : Empêche l'injection de données malveillantes
     2. Intégrité : Garantit que les calculs sont corrects
     3. Statistiques fiables : Évite les données aberrantes
+    4. Logique conditionnelle : Ne valide que les champs qui devraient être présents
     
     Retourne (is_valid, error_message)
     """
     errors = []
     
-    # 1. CHAMPS OBLIGATOIRES - Doivent exister
-    required_fields = ['sexe', 'age', 'premier', 'date', 'ex', 'score', 'insta', 'abo', 
+    # 1. CHAMPS TOUJOURS OBLIGATOIRES (peu importe les réponses)
+    always_required = ['sexe', 'age', 'premier', 'date', 'ex', 'score', 'insta', 'abo', 
                       'chien', 'ami', 'bz', 'demi_famille']
-    for field in required_fields:
+    
+    for field in always_required:
         if field not in form or form.get(field) == '':
             errors.append(f"Le champ '{field}' est obligatoire")
     
     if errors:
         return False, " | ".join(errors)
     
-    # 2. VALIDATION DES CHAMPS NUMÉRIQUES
+    # 2. VALIDATION DES CHAMPS NUMÉRIQUES OBLIGATOIRES
     try:
         age = int(form.get('age', 0))
         if not (13 <= age <= 100):
@@ -59,12 +62,14 @@ def validate_form(form):
     except ValueError:
         errors.append("L'âge doit être un nombre")
     
+    premier = -1 # Initialisation pour la validation conditionnelle
     try:
         premier = int(form.get('premier', 0))
         if not (0 <= premier <= 100):
             errors.append("L'âge de la première fois doit être entre 0 et 100")
     except ValueError:
         errors.append("L'âge de la première fois doit être un nombre")
+        premier = -1  # Valeur invalide pour éviter les erreurs plus tard
     
     try:
         date = int(form.get('date', 0))
@@ -101,25 +106,33 @@ def validate_form(form):
     except ValueError:
         errors.append("Les abonnements Instagram doivent être un nombre")
     
-    # Bodycount (optionnel si premier=0)
-    if form.get('bodyc'):
-        try:
-            bodyc = int(form.get('bodyc', 0))
-            if bodyc < 0:
-                errors.append("Le bodycount ne peut pas être négatif")
-        except ValueError:
-            errors.append("Le bodycount doit être un nombre")
+    # 3. VALIDATION CONDITIONNELLE - Bodycount (seulement si premier > 0)
+    bodyc = -1 # Initialisation pour la validation conditionnelle
+    if premier > 0:
+        # Si la personne a déjà eu une première fois, bodycount est obligatoire
+        if 'bodyc' not in form or form.get('bodyc') == '':
+            errors.append("Le bodycount est obligatoire si vous avez déjà eu une première fois")
+        else:
+            try:
+                bodyc = int(form.get('bodyc', 0))
+                if bodyc < 0:
+                    errors.append("Le bodycount ne peut pas être négatif")
+            except ValueError:
+                errors.append("Le bodycount doit être un nombre")
     
-    # Age plus vieux (optionnel)
-    if form.get('age_plus_vieux'):
-        try:
-            age_vieux = int(form.get('age_plus_vieux', 0))
-            if age_vieux < 0:
-                errors.append("L'âge ne peut pas être négatif")
-        except ValueError:
-            errors.append("L'âge de la personne la plus vieille doit être un nombre")
+    # 4. VALIDATION CONDITIONNELLE - Age plus vieux (seulement si bodycount > 0)
+    if bodyc > 0: # Use the validated bodyc
+        if 'age_plus_vieux' not in form or form.get('age_plus_vieux') == '':
+            errors.append("L'âge de la personne la plus vieille est obligatoire si le bodycount est supérieur à 0")
+        else:
+            try:
+                age_vieux = int(form.get('age_plus_vieux', 0))
+                if age_vieux < 0:
+                    errors.append("L'âge ne peut pas être négatif")
+            except ValueError:
+                errors.append("L'âge de la personne la plus vieille doit être un nombre")
     
-    # 3. VALIDATION DES CHOIX MULTIPLES
+    # 5. VALIDATION DES CHOIX MULTIPLES (toujours obligatoires)
     valid_choices = {
         'sexe': ['h', 'f'],
         'chien': ['c', 'b'],
@@ -132,7 +145,9 @@ def validate_form(form):
         if form.get(field) not in allowed_values:
             errors.append(f"Valeur invalide pour '{field}'")
     
-    # Champs conditionnels
+    # 6. VALIDATION DES CHAMPS CONDITIONNELS (optionnels)
+    # Ces champs ne sont présents que dans certains cas, donc on ne les valide que s'ils existent
+    
     if form.get('trompe') and form.get('trompe') not in ['oui', 'non']:
         errors.append("Valeur invalide pour 'trompe'")
     
