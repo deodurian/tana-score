@@ -194,8 +194,13 @@
                     <tr>
                         <td>{{ entry.get('sexe', '-') }}</td>
                         <td>{{ entry.get('age', '-') }}</td>
-                        <td style="color: #ff69b4; font-weight: bold;">{{ entry.get('T', '-') | round if entry.get('T')
-                            else '-' }}</td>
+                        <td style="color: #ff69b4; font-weight: bold;">
+                            {% if entry.get('T') %}
+                            {{ entry.get('T') | float | round }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
                         <td>{{ entry.get('pourcentage', '-') }}%</td>
                         <td>{{ entry.get('bodyc', '-') }}</td>
                     </tr>

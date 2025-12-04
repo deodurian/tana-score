@@ -430,37 +430,43 @@ def dashboard(secret_token):
             # Mot de passe correct, afficher le dashboard
             from google_sheets_utils import get_all_data_from_sheets
             
-            # Lire les données depuis Google Sheets
-            data = get_all_data_from_sheets()
-            stats = get_stats()
-            
-            # Calculer distribution des scores
-            scores = []
-            for entry in data:
-                try:
-                    if 'T' in entry and entry['T']:
-                        scores.append(float(entry['T']))
-                except (ValueError, TypeError):
-                    continue
-            
-            # Grouper par tranches
-            distribution = {
-                '0-10': sum(1 for s in scores if s <= 10),
-                '11-30': sum(1 for s in scores if 10 < s <= 30),
-                '31-80': sum(1 for s in scores if 30 < s <= 80),
-                '81-220': sum(1 for s in scores if 80 < s <= 220),
-                '221-500': sum(1 for s in scores if 220 < s <= 500),
-                '501+': sum(1 for s in scores if s > 500)
-            }
-            
-            # 10 dernières soumissions
-            recent = data[-10:][::-1]  # Inverser pour avoir les plus récentes en premier
-            
-            return render_template('dashboard.html', 
-                                 stats=stats, 
-                                 distribution=distribution,
-                                 recent=recent,
-                                 total_scores=len(scores))
+            try:
+                # Lire les données depuis Google Sheets
+                data = get_all_data_from_sheets()
+                stats = get_stats()
+                
+                # Calculer distribution des scores
+                scores = []
+                for entry in data:
+                    try:
+                        if 'T' in entry and entry['T']:
+                            scores.append(float(entry['T']))
+                    except (ValueError, TypeError):
+                        continue
+                
+                # Grouper par tranches
+                distribution = {
+                    '0-10': sum(1 for s in scores if s <= 10),
+                    '11-30': sum(1 for s in scores if 10 < s <= 30),
+                    '31-80': sum(1 for s in scores if 30 < s <= 80),
+                    '81-220': sum(1 for s in scores if 80 < s <= 220),
+                    '221-500': sum(1 for s in scores if 220 < s <= 500),
+                    '501+': sum(1 for s in scores if s > 500)
+                }
+                
+                # 10 dernières soumissions
+                recent = data[-10:][::-1]  # Inverser pour avoir les plus récentes en premier
+                
+                return render_template('dashboard.html', 
+                                     stats=stats, 
+                                     distribution=distribution,
+                                     recent=recent,
+                                     total_scores=len(scores))
+            except Exception as e:
+                # Si erreur lors de la lecture de Google Sheets
+                print(f"Erreur dashboard: {e}")
+                return render_template('error.html', 
+                                     error=f"Impossible de charger les données depuis Google Sheets. Erreur: {str(e)}"), 500
         else:
             return render_template('dashboard_login.html', error="Mot de passe incorrect")
     
