@@ -79,6 +79,7 @@ def calculer_T(donnees):
     demi_famille = donnees.get("demi_famille")  # oui/non
 
     T = 0
+    n = 0  # Initialisation pour éviter NameError si premier == 0
     if sexe == "f":
         T = 1
 
@@ -87,16 +88,16 @@ def calculer_T(donnees):
             n = bodyc
         else:
             n = bodyc / (age - premier)
-        T = bodyc * 2
+        T += bodyc * 2
         if bodyc != 0 and n > 1:
             T += 2 + n
     else:
-        bodyc = 0
+        T += 0
 
     if premier >= 16:
-        T = 4
+        T += 4
     elif premier == 0:
-        T = 0
+        T += 0
     else:
         T += 4 + abs(16 - premier)
 
@@ -129,7 +130,7 @@ def calculer_T(donnees):
     if chien == "c":
         T += (ratio + bodyc + ex + date) * 3
     elif chien == "b" and (age - premier + 1) > 0 and bodyc / (age - premier + 1) > 1.2:
-        T += bodyc * n
+        T += bodyc * (n+1)
     elif chien == "b":
         T -= exp(-1.3)
 
@@ -165,8 +166,8 @@ def calculer_T(donnees):
             T += bodyc*1.5
         if refaire == "oui":
             T *= 1.4 
-        else:
-            T -= 1
+    else:
+        T -= 1
 
     if maquillage == "full":
         T += 5
@@ -215,8 +216,8 @@ def calculer_T(donnees):
             return round(-10 * log1p(abs(T)))  # pourcentage négatif progressif
 
         s = 100  # centre de la courbe à T = 100
-        n = 1.02  # pour que T=3000 donne environ 97%
-        return round(100 * (T**n) / (T**n + s**n), 2)
+        j = 1.02  # pour que T=3000 donne environ 97%
+        return round(100 * (T**j) / (T**j + s**j), 2)
     
     pourcentage = sigmoid_percent(T)
     return T, pourcentage
