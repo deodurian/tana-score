@@ -280,11 +280,15 @@ def submit():
     # Calculer les statistiques pour comparaison
     stats = get_stats(user_score=t_score)
     
+    # Récupérer le temps de complétion
+    completion_time = form.get('completion_time', 'N/A')
+    
     # Afficher immédiatement les résultats avec les stats
     return render_template('resultat.html', 
                          T=t_score, 
                          pourcentage=pourcentage,
-                         stats=stats)
+                         stats=stats,
+                         completion_time=completion_time)
 
 
 
@@ -315,6 +319,7 @@ def telecharger_image():
         from PIL import Image
         t_score = request.args.get('T', default='0')
         pourcentage = request.args.get('pourcentage', default='0')
+        percentile = request.args.get('percentile', default='0')
 
         # Dimensions carrées
         largeur, hauteur = 1080, 1080
@@ -347,8 +352,9 @@ def telecharger_image():
             font_label = ImageFont.truetype(font_path, 40)
             font_valeur = ImageFont.truetype(font_path, 80)
             font_phrase = ImageFont.truetype(font_path, 30)
+            font_classement = ImageFont.truetype(font_path, 35)
         except:
-            font_titre = font_label = font_valeur = font_phrase = ImageFont.load_default()
+            font_titre = font_label = font_valeur = font_phrase = font_classement = ImageFont.load_default()
 
         # Logo en haut à gauche
         try:
@@ -385,6 +391,16 @@ def telecharger_image():
         draw.text((x_center - w_label2 / 2, 400), label_pct, fill="black", font=font_label)
         draw.text((x_center - w_val2 / 2, 450), val_pct, fill="darkred", font=font_valeur)
 
+        # Classement (nouveau)
+        try:
+            percentile_val = float(percentile)
+            top_percent = 100 - percentile_val
+            classement_text = f"Top {top_percent:.0f}%"
+            w_classement = draw.textbbox((0, 0), classement_text, font=font_classement)[2]
+            draw.text((x_center - w_classement / 2, 560), classement_text, fill="purple", font=font_classement)
+        except:
+            pass
+
         # Phrase finale selon le score brut
         try:
             t_val = float(t_score)
@@ -394,7 +410,7 @@ def telecharger_image():
         if t_val <= 10:
             phrase = "Bravo à toi, tu n'es pas une tana."
         elif t_val <= 30:
-            phrase = "Aïe… c’est pas que tu es une tana, c’est que tu aimes bien t’amuser."
+            phrase = "Aïe… c'est pas que tu es une tana, c'est que tu aimes bien t'amuser."
         elif t_val <= 80:
             phrase = "Oula, on a affaire à une tana timide, mais une tana quand même."
         elif t_val <= 220:
@@ -402,7 +418,7 @@ def telecharger_image():
         elif t_val <= 500:
             phrase = "On rentre dans une catégorie de tana qui nous dépasse."
         elif t_val <= 1000:
-            phrase = "Tu vis pour t’amuser. Une vie de péché."
+            phrase = "Tu vis pour t'amuser. Une vie de péché."
         else:
             phrase = "On a dépassé les limites humaines… consulte un psy peut-être 😅"
 

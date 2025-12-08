@@ -1,6 +1,10 @@
 const questions = document.querySelectorAll('.question');
 const ding = document.getElementById('ding');
 
+// Tracking du temps de complétion
+let quizStartTime = Date.now();
+let navigationHistory = []; // Historique pour le bouton retour
+
 questions.forEach((q, i) => {
   if (i !== 0) q.style.display = 'none';
 });
@@ -24,6 +28,7 @@ function showNext(i) {
 
   if (nextIndex < questions.length) {
     questions[nextIndex].style.display = 'block';
+    navigationHistory.push(nextIndex); // Ajouter à l'historique
   } else {
     // Affiche explicitement la page résultats
     const resultsQuestion = document.getElementById('q18');
@@ -34,6 +39,24 @@ function showNext(i) {
     } else {
       console.log('Fin du questionnaire ou plus de questions visibles');
     }
+  }
+}
+
+function showPrevious(currentIndex) {
+  // Retirer la question actuelle de l'historique
+  if (navigationHistory.length > 0) {
+    navigationHistory.pop();
+  }
+
+  // Trouver la question précédente visible
+  let prevIndex = currentIndex - 1;
+  while (prevIndex >= 0 && questions[prevIndex].classList.contains('hidden')) {
+    prevIndex--;
+  }
+
+  if (prevIndex >= 0) {
+    questions[currentIndex].style.display = 'none';
+    questions[prevIndex].style.display = 'block';
   }
 }
 
@@ -54,7 +77,7 @@ function checkAnswerAndNext(i) {
 
   for (const input of inputs) {
     if ((input.type === 'radio' && input.checked) ||
-        ((input.type === 'text' || input.type === 'number') && input.value.trim() !== '')) {
+      ((input.type === 'text' || input.type === 'number') && input.value.trim() !== '')) {
       valid = true;
       break;
     }
@@ -204,7 +227,7 @@ document.querySelectorAll('.button-radio').forEach(button => {
 });
 
 // Ajout du gestionnaire d'événements pour la touche "Entrée"
-document.addEventListener("keydown", function(event) {
+document.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     event.preventDefault(); // Empêche la soumission du formulaire
 
@@ -223,7 +246,7 @@ document.addEventListener("keydown", function(event) {
 
     for (const input of inputs) {
       if ((input.type === 'radio' && input.checked) ||
-          ((input.type === 'text' || input.type === 'number') && input.value.trim() !== '')) {
+        ((input.type === 'text' || input.type === 'number') && input.value.trim() !== '')) {
         valid = true;
         break;
       }
@@ -233,4 +256,17 @@ document.addEventListener("keydown", function(event) {
       playAndNext(currentIndex);
     }
   }
+});
+
+// Calculer et injecter le temps de complétion lors de la soumission
+document.getElementById('tanaForm').addEventListener('submit', function (e) {
+  const completionTime = Math.floor((Date.now() - quizStartTime) / 1000); // en secondes
+
+  // Formater le temps (ex: "2min 34s")
+  const minutes = Math.floor(completionTime / 60);
+  const seconds = completionTime % 60;
+  const formattedTime = minutes > 0 ? `${minutes}min ${seconds}s` : `${seconds}s`;
+
+  // Injecter dans le champ caché
+  document.getElementById('completionTime').value = formattedTime;
 });

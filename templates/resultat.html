@@ -77,21 +77,49 @@
                   </div>
                   {% endif %}
 
+                  <!-- Temps de complétion -->
+                  {% if completion_time and completion_time != 'N/A' %}
+                  <p class="completion-time">⏱️ Quiz complété en {{ completion_time }}</p>
+                  {% endif %}
+
                   <a class="back-link" href="/">↩ Revenir au formulaire</a>
 
     </div>
   </div>
 
-  <div class="action-buttons" style="margin-top: 20px; text-align: center;">
-    <form method="get" action="{{ url_for('telecharger_image') }}">
-      <input type="hidden" name="T" value="{{ T }}">
-      <input type="hidden" name="pourcentage" value="{{ pourcentage }}">
-      <button type="submit">📥 Télécharger mon score</button>
-    </form>
-    <button onclick="window.open('https://www.instagram.com/', '_blank')">📸 Instagram</button>
-    <button onclick="window.open('https://twitter.com/', '_blank')">🐦 Twitter</button>
-    <p style="margin-top: 10px;">Publie ton score sur Insta avec le hashtag <strong>#TANAscore</strong></p>
+  <!-- Boutons de partage social améliorés -->
+  <div class="share-section" style="margin-top: 30px; text-align: center;">
+    <h3 style="color: #ff69b4; margin-bottom: 20px;">📢 Partage ton score !</h3>
+
+    <div class="share-buttons">
+      <button onclick="shareToInstagram()" class="btn-share instagram">
+        <span class="emoji">📸</span>
+        <span class="text">Instagram</span>
+      </button>
+
+      <button onclick="shareToTwitter()" class="btn-share twitter">
+        <span class="emoji">🐦</span>
+        <span class="text">Twitter</span>
+      </button>
+
+      <a href="{{ url_for('telecharger_image') }}?T={{ T }}&pourcentage={{ pourcentage }}&percentile={{ stats.percentile if stats else 0 }}"
+        download class="btn-share download">
+        <span class="emoji">📥</span>
+        <span class="text">Télécharger</span>
+      </a>
+    </div>
+
+    <p style="margin-top: 15px; color: #aaa; font-size: 0.9rem;">
+      Utilise le hashtag <strong style="color: #ff69b4;">#TANAscore</strong>
+    </p>
   </div>
+
+  <!-- Champs cachés pour le partage -->
+  <input type="hidden" name="T" value="{{ T }}">
+  <input type="hidden" name="pourcentage" value="{{ pourcentage }}">
+  <input type="hidden" name="percentile" value="{{ stats.percentile if stats else 0 }}">
+
+  <script src="{{ url_for('static', filename='share.js') }}"></script>
 </body>
 
 </html>
