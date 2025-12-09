@@ -468,13 +468,15 @@ form#tanaForm {
 .btn-back {
   background-color: #666 !important;
   color: white;
-  font-size: 1.2rem;
-  padding: 12px 24px;
-  font-weight: 600;
-  border-radius: 12px;
+  font-size: 1.4rem;
+  padding: 18px 38px;
+  font-weight: 700;
+  border-radius: 16px;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
+  flex: 1;
+  /* Prendre la même largeur que le bouton Suivant */
 }
 
 .btn-back:hover {
@@ -489,6 +491,14 @@ form#tanaForm {
   gap: 15px;
   width: 100%;
   margin-top: 20px;
+}
+
+.button-group .open-field,
+.button-group .btn-back {
+  flex: 1;
+  /* Les deux boutons prennent la même largeur */
+  min-width: 0;
+  /* Permet au flex de fonctionner correctement */
 }
 
 /* ====== Temps de complétion ====== */
