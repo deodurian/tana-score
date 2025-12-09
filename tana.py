@@ -230,9 +230,9 @@ def get_stats(user_score=None):
     
     return {
         'total': len(data),
-        'moyenne': round(moyenne, 1),
-        'mediane': round(mediane, 1),
-        'percentile': round(percentile, 0)
+        'moyenne': round(moyenne, 2),
+        'mediane': round(mediane, 2),
+        'percentile': round(percentile, 2)
     }
 
 # --- Routes ---
@@ -375,7 +375,7 @@ def telecharger_image():
 
         # Score brut
         label_score = "Score brut"
-        val_score = f"{float(t_score):.1f}"
+        val_score = f"{float(t_score):.2f}"
         w_label = draw.textbbox((0, 0), label_score, font=font_label)[2]
         w_val = draw.textbbox((0, 0), val_score, font=font_valeur)[2]
 
@@ -464,6 +464,20 @@ def dashboard(secret_token):
             try:
                 # Lire les données depuis Google Sheets
                 data = get_all_data_from_sheets()
+                
+                # Recalculer les scores manquants
+                for entry in data:
+                    if 'T' not in entry or not entry['T']:
+                        # Recalculer le score pour cette entrée
+                        try:
+                            t_score, pourcentage = calculer_T(entry)
+                            entry['T'] = t_score
+                            entry['pourcentage'] = pourcentage
+                        except Exception as e:
+                            print(f"Erreur calcul score pour entrée: {e}")
+                            entry['T'] = 0
+                            entry['pourcentage'] = 0
+                
                 stats = get_stats()
                 
                 # Calculer distribution des scores
@@ -492,7 +506,8 @@ def dashboard(secret_token):
                                      stats=stats, 
                                      distribution=distribution,
                                      recent=recent,
-                                     total_scores=len(scores))
+                                     total_scores=len(scores),
+                                     total_entries=len(data))  # Ajouter le nombre total d'entrées
             except Exception as e:
                 # Si erreur lors de la lecture de Google Sheets
                 print(f"Erreur dashboard: {e}")

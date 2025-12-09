@@ -24,7 +24,7 @@
       <h1>Voici ton résultat : </h1>
 
       {% if T is not none %}
-      <p class="score-brut"><strong>Score brut :</strong> {{ T | round }}</p>
+      <p class="score-brut"><strong>Score brut :</strong> {{ "%.2f" | format(T) }}</p>
       {% if T <= 10 %} <p class="message-resultat">Bravo à toi, tu n'es pas une tana.</p>
         {% elif T <= 30 %} <p class="message-resultat">Aïe… c’est pas que tu es une tana, c’est que tu aimes bien
           t’amuser.</p>
@@ -41,7 +41,7 @@
                   {% endif %}
 
                   {% if pourcentage is not none %}
-                  <p class="pourcentage"><strong>Pourcentage de Tana :</strong> {{ pourcentage | round }} %</p>
+                  <p class="pourcentage"><strong>Pourcentage de Tana :</strong> {{ "%.2f" | format(pourcentage) }} %</p>
                   {% endif %}
 
                   <!-- Comparaison avec la moyenne -->
@@ -51,17 +51,17 @@
                     <h3 style="color: #ff69b4; margin-bottom: 15px; font-size: 1.3rem;">📊 Comparaison</h3>
 
                     <p style="margin: 10px 0; font-size: 1.1rem;">
-                      <strong>Ton score :</strong> {{ T | round }}
+                      <strong>Ton score :</strong> {{ "%.2f" | format(T) }}
                       <span style="color: #888;">|</span>
                       <strong>Moyenne générale :</strong> {{ stats.moyenne }}
                     </p>
 
                     {% if T > stats.moyenne %}
                     <p style="color: #ff6b6b; font-size: 1.05rem; margin-top: 10px;">
-                      🔥 Tu es au-dessus de la moyenne ! (+{{ (T - stats.moyenne) | round(1) }} points)
+                      🔥 Tu es au-dessus de la moyenne ! (+{{ (T - stats.moyenne) | round(2) }} points)
                     </p>
                     {% elif T < stats.moyenne %} <p style="color: #51cf66; font-size: 1.05rem; margin-top: 10px;">
-                      ✨ Tu es en dessous de la moyenne ! ({{ (stats.moyenne - T) | round(1) }} points de moins)
+                      ✨ Tu es en dessous de la moyenne ! ({{ (stats.moyenne - T) | round(2) }} points de moins)
                       </p>
                       {% else %}
                       <p style="color: #ffd43b; font-size: 1.05rem; margin-top: 10px;">
@@ -70,7 +70,8 @@
                       {% endif %}
 
                       <p style="margin-top: 15px; color: #aaa; font-size: 0.95rem;">
-                        Tu es dans le <strong style="color: #ff69b4;">top {{ 100 - stats.percentile | round }}%</strong>
+                        Tu es dans le <strong style="color: #ff69b4;">top {{ "%.2f" | format(100 - stats.percentile)
+                          }}%</strong>
                         <span style="color: #666;">•</span>
                         {{ stats.total }} participant{{ 's' if stats.total > 1 else '' }} au total
                       </p>

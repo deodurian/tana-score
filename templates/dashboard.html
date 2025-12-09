@@ -151,8 +151,13 @@
             </div>
 
             <div class="stat-card">
-                <h3>Scores Valides</h3>
-                <div class="value">{{ total_scores }}</div>
+                <h3>Entrées Google Sheets</h3>
+                <div class="value">{{ total_entries if total_entries is defined else total_scores }}</div>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">
+                    {% if total_entries is defined and total_entries != total_scores %}
+                    ({{ total_scores }} avec score T)
+                    {% endif %}
+                </p>
             </div>
         </div>
 
@@ -196,7 +201,7 @@
                         <td>{{ entry.get('age', '-') }}</td>
                         <td style="color: #ff69b4; font-weight: bold;">
                             {% if entry.get('T') %}
-                            {{ entry.get('T') | float | round }}
+                            {{ "%.2f" | format(entry.get('T') | float) }}
                             {% else %}
                             -
                             {% endif %}
