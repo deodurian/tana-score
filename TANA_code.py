@@ -1,3 +1,5 @@
+import subprocess
+from math import log2
 from math import *
 from google_sheets_utils import enregistrer_dans_google_sheet
 
@@ -85,7 +87,7 @@ def calculer_T(donnees):
 
     if premier != 0:
         if (age - premier) == 0:
-            n = bodyc
+            n = bodyc + 1 
         else:
             n = bodyc / (age - premier)
         T += bodyc * 2
@@ -101,56 +103,46 @@ def calculer_T(donnees):
     else:
         T += 4 + abs(16 - premier)
 
-    if score > 1_000_000:
-        T += log(score)
-    elif score > 500_000:
-        T += log(score) - 1
-    elif score > 200_000:
-        T += log(score) - 2
-    elif score > 100_000:
-        T += 2
-    elif score > 50_000:
-        T += 1
+    # Récompenser les scores faibles et punir les scores élevés de manière continue (formule racine carrée).
+    # Un score de 50 000 est neutre (aucun effet sur T). Les scores inférieurs réduisent T, les scores supérieurs l'augmentent.
+    T += 0.02 * (sqrt(max(0.0, score)) - sqrt(50000.0))
 
-    if abo != 0:
-        ratio = insta / abo
-        if ratio >= 10 and insta > 10_000:
-            T += ratio - 3
-        elif ratio >= 4 or insta > 900:
-            T += ratio - 1
-        elif ratio >= 1 or insta > 400 or abo > insta:
-            T += ratio
-        elif ratio < 1:
-            T += 1
-        elif ratio < 0.5:
-            T -= ratio
-    else:
-        ratio = 1
+
+    # Calculer le ratio d'abonnés / abonnements de manière sécurisée
+    ratio = insta / abo if abo != 0 else 1.0
+
+    # Punir continûment les ratios élevés et les grands comptes d'abonnés (formule Log-Log)
+    # Les ratios inférieurs à 1.0 agissent comme une récompense (diminuent T).
+    if insta > 0 and abo > 0:
+        T += 3.0 * log10(ratio) * log10(insta + 1)
 
     if chien == "c":
         T += (ratio + bodyc + ex + date) * 3
-    elif chien == "b" and (age - premier + 1) > 0 and bodyc / (age - premier + 1) > 1.2:
-        T += bodyc * (n+1)
+    elif chien == "b" and (age - premier + 1) > 0 and bodyc  > 20:
+        T += 2 * bodyc * (n+1+ ex + date)
     elif chien == "b":
-        T -= exp(-1.3)
+        if sexe == "h" :
+            T -= exp(1.3)
+        else:
+            T += exp(1.5)
 
     if (ami == "f" and sexe == "f") or (ami == "g" and sexe == "h"):
         T -= 1
     elif (ami == "f" and sexe == "g") or (ami == "g" and sexe == "f"):
-        T += 2
+        T += 2 * ex 
 
     if date != 0:
         D = (date * 2) / age
         if D > 10 or date > 20:
-            T += D * 1.3
+            T += D * age
         if D > 6:
-            T += D
+            T += 2 * D
         elif D > 2:
-            T += (date / D) + 1
+            T += (date / 2) + 1
         else:
-            T += 1
+            T += date
     else:
-        T -= 0.3
+        T -= 3
 
     if bodyc != 0:
         exbody = ex / bodyc
@@ -161,22 +153,22 @@ def calculer_T(donnees):
 
     # --- Nouvelles influences ---
     if trompe == "oui":
-        T += 2
+        T += bodyc * 2
         if plaisir == "oui":
-            T += bodyc*1.5
+            T += bodyc**2
         if refaire == "oui":
-            T *= 1.4 
+            T += exp(bodyc) 
     else:
-        T -= 1
+        T -= date
 
     if maquillage == "full":
-        T += 5
+        T += ex * 2
     elif maquillage == "fond":
-        T += 3
+        T += ex
     elif maquillage == "eyeliner":
-        T += 1
+        T += 0
     elif maquillage == "creme":
-        T -= 3
+        T -= 1
 
     if potes_vs_relation == "1":
         T += 2
@@ -196,7 +188,7 @@ def calculer_T(donnees):
             T += 1 
 
     if demi_famille == "oui":
-        T += 10
+        T += 100
 
     if ex > 7 or (exbody < 1 and exbody != 0):
             T += ex * bodyc
