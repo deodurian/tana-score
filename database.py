@@ -1,56 +1,106 @@
-import sqlite3
+import os
 import json
 from datetime import datetime
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+def is_postgres():
+    return DATABASE_URL is not None and DATABASE_URL.startswith("postgres")
+
+if is_postgres():
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+else:
+    import sqlite3
 
 DB_FILE = 'tana.db'
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    if is_postgres():
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    else:
+        conn = sqlite3.connect(DB_FILE)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+def execute_query(conn, query, params=(), commit=False, fetchone=False, fetchall=False):
+    """Exécute une requête en s'adaptant à SQLite ou PostgreSQL."""
+    if is_postgres():
+        # Remplacer les ? par des %s pour PostgreSQL
+        query = query.replace('?', '%s')
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute(query, params)
+    else:
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+
+    result = None
+    if fetchone:
+        result = cursor.fetchone()
+    elif fetchall:
+        result = cursor.fetchall()
+
+    if commit:
+        conn.commit()
+    
+    cursor.close()
+    return result
 
 def init_db():
     conn = get_db_connection()
-    # On crée une table pour stocker les soumissions
-    # On stocke toutes les données brutes dans une colonne JSON par simplicité,
-    # et on extrait le score (T) et le pourcentage pour les requêtes rapides
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS submissions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            score_t REAL NOT NULL,
-            pourcentage REAL NOT NULL,
-            raw_data TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
+    
+    if is_postgres():
+        # PostgreSQL syntax
+        execute_query(conn, '''
+            CREATE TABLE IF NOT EXISTS submissions (
+                id SERIAL PRIMARY KEY,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                score_t REAL NOT NULL,
+                pourcentage REAL NOT NULL,
+                raw_data TEXT NOT NULL
+            )
+        ''', commit=True)
+    else:
+        # SQLite syntax
+        execute_query(conn, '''
+            CREATE TABLE IF NOT EXISTS submissions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                score_t REAL NOT NULL,
+                pourcentage REAL NOT NULL,
+                raw_data TEXT NOT NULL
+            )
+        ''', commit=True)
+    
     conn.close()
 
 def insert_submission(t_score, pourcentage, raw_data_dict):
     conn = get_db_connection()
     raw_data_json = json.dumps(raw_data_dict)
-    conn.execute(
+    execute_query(conn,
         'INSERT INTO submissions (score_t, pourcentage, raw_data) VALUES (?, ?, ?)',
-        (t_score, pourcentage, raw_data_json)
+        (t_score, pourcentage, raw_data_json),
+        commit=True
     )
-    conn.commit()
     conn.close()
 
 def get_stats_from_db(user_score=None):
-    """
-    Calcule les statistiques globales depuis SQLite de manière très rapide.
-    """
     conn = get_db_connection()
     
-    # Récupérer le nombre total et la moyenne
-    stats_row = conn.execute('''
+    stats_row = execute_query(conn, '''
         SELECT COUNT(*) as total, AVG(score_t) as moyenne 
         FROM submissions
-    ''').fetchone()
+    ''', fetchone=True)
     
     total = stats_row['total'] or 0
-    moyenne = stats_row['moyenne'] or 0
     
+    # Pour PostgreSQL, AVG retourne un Decimal, il faut le convertir
+    try:
+        moyenne = float(stats_row['moyenne']) if stats_row['moyenne'] is not None else 0
+    except:
+        moyenne = 0
+        
     if total == 0:
         conn.close()
         return {
@@ -60,29 +110,30 @@ def get_stats_from_db(user_score=None):
             'percentile': 0
         }
 
-    # Calcul de la médiane via SQLite (tri et pagination)
     offset = (total - 1) // 2
     limit = 2 if total % 2 == 0 else 1
     
-    median_rows = conn.execute(f'''
+    # OFFSET et LIMIT sont supportés par les deux de la même manière
+    median_rows = execute_query(conn, f'''
         SELECT score_t FROM submissions 
         ORDER BY score_t ASC 
         LIMIT {limit} OFFSET {offset}
-    ''').fetchall()
+    ''', fetchall=True)
     
     if len(median_rows) == 2:
         mediane = (median_rows[0]['score_t'] + median_rows[1]['score_t']) / 2
-    else:
+    elif len(median_rows) == 1:
         mediane = median_rows[0]['score_t']
+    else:
+        mediane = 0
 
-    # Calcul du percentile
     percentile = 0
     if user_score is not None:
-        lower_count_row = conn.execute('''
+        lower_count_row = execute_query(conn, '''
             SELECT COUNT(*) as lower_count 
             FROM submissions 
             WHERE score_t < ?
-        ''', (user_score,)).fetchone()
+        ''', (user_score,), fetchone=True)
         lower_count = lower_count_row['lower_count']
         percentile = (lower_count / total) * 100
 
@@ -96,18 +147,19 @@ def get_stats_from_db(user_score=None):
     }
 
 def get_all_submissions_for_export():
-    """
-    Récupère toutes les soumissions pour l'export CSV.
-    """
     conn = get_db_connection()
-    rows = conn.execute('SELECT * FROM submissions ORDER BY timestamp DESC').fetchall()
+    rows = execute_query(conn, 'SELECT * FROM submissions ORDER BY timestamp DESC', fetchall=True)
     conn.close()
     
     results = []
     for row in rows:
-        # Reconstruire un dictionnaire plat
         data = json.loads(row['raw_data'])
-        data['Date_Soumission'] = row['timestamp']
+        # Formater la date en string si c'est un objet datetime (PostgreSQL)
+        ts = row['timestamp']
+        if isinstance(ts, datetime):
+            ts = ts.strftime("%Y-%m-%d %H:%M:%S")
+            
+        data['Date_Soumission'] = ts
         data['T'] = row['score_t']
         data['pourcentage'] = row['pourcentage']
         results.append(data)
@@ -116,13 +168,17 @@ def get_all_submissions_for_export():
 
 def get_recent_submissions(limit=10):
     conn = get_db_connection()
-    rows = conn.execute(f'SELECT * FROM submissions ORDER BY timestamp DESC LIMIT {limit}').fetchall()
+    rows = execute_query(conn, f'SELECT * FROM submissions ORDER BY timestamp DESC LIMIT {limit}', fetchall=True)
     conn.close()
     
     results = []
     for row in rows:
         data = json.loads(row['raw_data'])
-        data['timestamp'] = row['timestamp']
+        ts = row['timestamp']
+        if isinstance(ts, datetime):
+            ts = ts.strftime("%Y-%m-%d %H:%M:%S")
+            
+        data['timestamp'] = ts
         data['T'] = row['score_t']
         data['pourcentage'] = row['pourcentage']
         results.append(data)
@@ -130,8 +186,7 @@ def get_recent_submissions(limit=10):
 
 def get_distribution():
     conn = get_db_connection()
-    # On récupère tous les scores pour calculer la distribution
-    rows = conn.execute('SELECT score_t FROM submissions').fetchall()
+    rows = execute_query(conn, 'SELECT score_t FROM submissions', fetchall=True)
     conn.close()
     
     scores = [row['score_t'] for row in rows]

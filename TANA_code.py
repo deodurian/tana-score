@@ -195,7 +195,7 @@ def calculer_T(donnees):
     elif ex > 4:
         T += ex
     elif ex >= 1:
-            T += 1
+            T += 6.7 
     else:
             T -= 0.3
     
