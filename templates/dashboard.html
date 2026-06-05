@@ -131,6 +131,10 @@
         <div class="dashboard-header">
             <h1>📊 Dashboard TANA Score</h1>
             <p style="color: #aaa;">Statistiques en temps réel</p>
+            <div style="margin-top: 20px;">
+                <a href="{{ url_for('dashboard_export') }}" style="background-color: #ff69b4; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 10px;">📥 Exporter (CSV)</a>
+                <a href="{{ url_for('dashboard_logout') }}" style="background-color: #444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold;">🚪 Déconnexion</a>
+            </div>
         </div>
 
         <!-- Statistiques principales -->
@@ -151,7 +155,7 @@
             </div>
 
             <div class="stat-card">
-                <h3>Entrées Google Sheets</h3>
+                <h3>Total des Entrées</h3>
                 <div class="value">{{ total_entries if total_entries is defined else total_scores }}</div>
                 <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">
                     {% if total_entries is defined and total_entries != total_scores %}
