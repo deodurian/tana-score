@@ -385,6 +385,16 @@ def dashboard_export():
         print(f"Erreur export: {e}")
         return "Erreur lors de l'export CSV", 500
 
+@app.route('/dashboard/migrate')
+@login_required
+def dashboard_migrate():
+    try:
+        from migrate_data import migrate
+        result = migrate()
+        return f"<h1>Résultat de la migration</h1><p>{result}</p><br><a href='/dashboard'>Retour au dashboard</a>"
+    except Exception as e:
+        return f"<h1>Erreur</h1><p>{str(e)}</p>", 500
+
 @app.route('/credit')
 def credit():
     return render_template('credit.html')

@@ -59,7 +59,8 @@ def migrate():
             print(f"Erreur lors de la migration de la ligne {i}: {e}")
             errors += 1
 
-    print(f"Migration terminée ! Succès: {success}, Erreurs: {errors}")
-
+    result_msg = f"Migration terminée ! Succès: {success}, Erreurs: {errors}"
+    print(result_msg)
+    return result_msg
 if __name__ == '__main__':
     migrate()
