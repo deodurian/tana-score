@@ -229,18 +229,66 @@ input[type="submit"].open-field:hover {
   background-color: #ff4da6 !important;
 }
 
-/* Centrage du formulaire */
+/* Classe utilitaire pour masquer les éléments */
+.hidden {
+  display: none !important;
+}
+
+/* Animations de glissement (Slide) */
+.slide-out-left {
+  animation: slideOutLeft 0.4s forwards ease-in-out;
+  position: absolute;
+  width: 100%;
+  left: 0;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.4s forwards ease-in-out;
+  display: flex !important;
+}
+
+.slide-out-right {
+  animation: slideOutRight 0.4s forwards ease-in-out;
+  position: absolute;
+  width: 100%;
+  left: 0;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.4s forwards ease-in-out;
+  display: flex !important;
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100vw); opacity: 0; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100vw); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100vw); opacity: 0; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100vw); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Container pour masquer ce qui déborde */
 form#tanaForm {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
   background-color: transparent;
   text-align: center;
-}
-
-/* Classe utilitaire pour masquer les éléments */
-.hidden {
-  display: none !important;
+  position: relative;
+  overflow-x: hidden;
+  min-height: 450px;
 }
 
 .selected-button {

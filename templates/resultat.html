@@ -12,7 +12,7 @@
   <!-- Favicon (petite icône dans l’onglet) -->
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='tana logo.png') }}">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-</head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
 
 <body>
   <header class="page-header">
@@ -75,6 +75,10 @@
                         <span style="color: #666;">•</span>
                         {{ stats.total }} participant{{ 's' if stats.total > 1 else '' }} au total
                       </p>
+
+                      <div style="margin-top: 20px; width: 100%;">
+                        <canvas id="scoreChart"></canvas>
+                      </div>
                   </div>
                   {% endif %}
 
@@ -121,6 +125,75 @@
   <input type="hidden" name="percentile" value="{{ stats.percentile if stats else 0 }}">
 
   <script src="{{ url_for('static', filename='share.js') }}"></script>
+  {% if stats and distribution %}
+  <script>
+    const distLabels = ['0-10', '11-30', '31-80', '81-220', '221-500', '501+'];
+    const distData = [
+      {{ distribution['0-10'] }},
+      {{ distribution['11-30'] }},
+      {{ distribution['31-80'] }},
+      {{ distribution['81-220'] }},
+      {{ distribution['221-500'] }},
+      {{ distribution['501+'] }}
+    ];
+
+    const userScore = {{ T }};
+    let bucketIndex = 0;
+    if (userScore <= 10) bucketIndex = 0;
+    else if (userScore <= 30) bucketIndex = 1;
+    else if (userScore <= 80) bucketIndex = 2;
+    else if (userScore <= 220) bucketIndex = 3;
+    else if (userScore <= 500) bucketIndex = 4;
+    else bucketIndex = 5;
+
+    const pointBgColors = distLabels.map((_, i) => i === bucketIndex ? 'rgba(255, 105, 180, 1)' : 'rgba(255, 105, 180, 0.2)');
+    const pointRadii = distLabels.map((_, i) => i === bucketIndex ? 8 : 4);
+
+    const ctx = document.getElementById('scoreChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: distLabels,
+            datasets: [{
+                label: 'Nombre de personnes',
+                data: distData,
+                fill: true,
+                backgroundColor: 'rgba(255, 105, 180, 0.1)',
+                borderColor: '#ff69b4',
+                borderWidth: 2,
+                tension: 0.4,
+                pointBackgroundColor: pointBgColors,
+                pointBorderColor: '#ff69b4',
+                pointRadius: pointRadii,
+                pointHoverRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            if (context.dataIndex === bucketIndex) {
+                                return 'Vous êtes ici ! (' + context.raw + ' personnes)';
+                            }
+                            return context.raw + ' personnes dans cette tranche';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { display: false },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#ccc', font: { size: 10 } }
+                }
+            }
+        }
+    });
+  </script>
+  {% endif %}
 </body>
 
 </html>

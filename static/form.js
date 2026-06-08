@@ -6,7 +6,11 @@ let quizStartTime = Date.now();
 let navigationHistory = []; // Historique pour le bouton retour
 
 questions.forEach((q, i) => {
-  if (i !== 0) q.style.display = 'none';
+  if (i !== 0) {
+    q.style.display = 'none';
+  } else {
+    q.style.display = 'flex';
+  }
 });
 
 function playAndNext(i) {
@@ -19,23 +23,42 @@ function playAndNext(i) {
 }
 
 function showNext(i) {
-  questions[i].style.display = 'none';
-
   let nextIndex = i + 1;
   while (nextIndex < questions.length && questions[nextIndex].classList.contains('hidden')) {
     nextIndex++;
   }
 
   if (nextIndex < questions.length) {
-    questions[nextIndex].style.display = 'block';
+    // Animation de sortie vers la gauche
+    questions[i].classList.remove('slide-in-right', 'slide-in-left');
+    questions[i].classList.add('slide-out-left');
+    
+    // Après l'animation, masquer complètement
+    setTimeout(() => {
+      questions[i].style.display = 'none';
+      questions[i].classList.remove('slide-out-left');
+    }, 400);
+
+    // Animation d'entrée depuis la droite
+    questions[nextIndex].style.display = 'flex';
+    questions[nextIndex].classList.remove('slide-out-left', 'slide-out-right', 'hidden');
+    questions[nextIndex].classList.add('slide-in-right');
+    
     navigationHistory.push(nextIndex); // Ajouter à l'historique
   } else {
     // Affiche explicitement la page résultats
     const resultsQuestion = document.getElementById('q18');
     if (resultsQuestion) {
-      questions.forEach(q => q.style.display = 'none');
-      resultsQuestion.classList.remove('hidden');
-      resultsQuestion.style.display = 'block';
+      questions[i].classList.add('slide-out-left');
+      setTimeout(() => {
+        questions.forEach(q => {
+          q.style.display = 'none';
+          q.classList.remove('slide-out-left', 'slide-in-right');
+        });
+        resultsQuestion.classList.remove('hidden');
+        resultsQuestion.style.display = 'flex';
+        resultsQuestion.classList.add('slide-in-right');
+      }, 400);
     } else {
       console.log('Fin du questionnaire ou plus de questions visibles');
     }
@@ -55,16 +78,30 @@ function showPrevious(currentIndex) {
   }
 
   if (prevIndex >= 0) {
-    questions[currentIndex].style.display = 'none';
-    questions[prevIndex].style.display = 'block';
+    // Animation de sortie vers la droite
+    questions[currentIndex].classList.remove('slide-in-right', 'slide-in-left');
+    questions[currentIndex].classList.add('slide-out-right');
+    
+    setTimeout(() => {
+      questions[currentIndex].style.display = 'none';
+      questions[currentIndex].classList.remove('slide-out-right');
+    }, 400);
+
+    // Animation d'entrée depuis la gauche
+    questions[prevIndex].style.display = 'flex';
+    questions[prevIndex].classList.remove('slide-out-left', 'slide-out-right', 'hidden');
+    questions[prevIndex].classList.add('slide-in-left');
   }
 }
 
 function showFirstVisibleQuestion() {
   for (let i = 0; i < questions.length; i++) {
     if (!questions[i].classList.contains('hidden')) {
-      questions.forEach(q => q.style.display = 'none');
-      questions[i].style.display = 'block';
+      questions.forEach(q => {
+        q.style.display = 'none';
+        q.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-left', 'slide-in-right');
+      });
+      questions[i].style.display = 'flex';
       break;
     }
   }
@@ -260,6 +297,15 @@ document.addEventListener("keydown", function (event) {
 
 // Calculer et injecter le temps de complétion lors de la soumission
 document.getElementById('tanaForm').addEventListener('submit', function (e) {
+  // Désactiver le bouton d'envoi pour éviter les clics multiples
+  const submitBtn = this.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Calcul en cours...";
+    submitBtn.style.opacity = "0.7";
+    submitBtn.style.cursor = "wait";
+  }
+
   const completionTime = Math.floor((Date.now() - quizStartTime) / 1000); // en secondes
 
   // Formater le temps (ex: "2min 34s")

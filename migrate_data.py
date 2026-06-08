@@ -5,7 +5,11 @@ from google_sheets_utils import get_all_data_from_sheets
 from TANA_code import calculer_T
 
 def migrate():
-    print("Initialisation de la base de données...")
+    print("Nettoyage et Initialisation de la base de données...")
+    # Supprimer les anciennes données pour éviter les doublons lors d'un second passage
+    conn = database.get_db_connection()
+    database.execute_query(conn, "DROP TABLE IF EXISTS submissions", commit=True)
+    conn.close()
     database.init_db()
     
     print("Récupération des données depuis Google Sheets...")
@@ -44,12 +48,14 @@ def migrate():
                 entry['T'] = t_score
                 entry['pourcentage'] = pourcentage
             else:
+                if isinstance(t_score, str):
+                    t_score = t_score.replace(',', '.')
                 t_score = float(t_score)
-                # Le pourcentage peut avoir un '%' dans Google Sheets
-                if isinstance(pourcentage, str) and '%' in pourcentage:
-                    pourcentage = float(pourcentage.replace('%', ''))
-                else:
-                    pourcentage = float(pourcentage)
+                
+                # Le pourcentage peut avoir un '%' ou une virgule dans Google Sheets
+                if isinstance(pourcentage, str):
+                    pourcentage = pourcentage.replace('%', '').replace(',', '.')
+                pourcentage = float(pourcentage)
             
             database.insert_submission(t_score, pourcentage, entry)
             success += 1

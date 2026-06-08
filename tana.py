@@ -163,6 +163,10 @@ def accueil():
 def quiz():
     return render_template('tana.html')
 
+@app.route("/quiz_duo", methods=["GET"])
+def quiz_duo():
+    return render_template('tana_duo.html')
+
 @app.route('/submit', methods=['POST'])
 def submit():
     form = request.form
@@ -185,6 +189,40 @@ def submit():
                          T=t_score, 
                          pourcentage=pourcentage,
                          stats=stats,
+                         distribution=database.get_distribution(),
+                         completion_time=completion_time)
+
+@app.route('/submit_duo', methods=['POST'])
+def submit_duo():
+    form = request.form
+    
+    # Séparer les données pour le joueur 1 et le joueur 2
+    form_p1 = {k.replace('_1', ''): v for k, v in form.items() if k.endswith('_1')}
+    form_p2 = {k.replace('_2', ''): v for k, v in form.items() if k.endswith('_2')}
+    
+    # Récupérer les clés sans suffixe (ex: completion_time)
+    for k, v in form.items():
+        if not k.endswith('_1') and not k.endswith('_2'):
+            form_p1[k] = v
+            form_p2[k] = v
+
+    t_score1, pourcentage1 = calculer_T(form_p1)
+    t_score2, pourcentage2 = calculer_T(form_p2)
+    
+    # Enregistrer les deux (les deux contribuent aux stats globales)
+    database.insert_submission(t_score1, pourcentage1, form_p1)
+    database.insert_submission(t_score2, pourcentage2, form_p2)
+    
+    # Récupérer les stats globales
+    stats = database.get_stats_from_db()
+    
+    completion_time = form.get('completion_time', 'N/A')
+    
+    return render_template('resultat_duo.html', 
+                         T1=t_score1, pourcentage1=pourcentage1,
+                         T2=t_score2, pourcentage2=pourcentage2,
+                         stats=stats,
+                         distribution=database.get_distribution(),
                          completion_time=completion_time)
 
 @app.route('/googlee76869bb6ba74b8b.html')

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="abn4gO5EeaOGTLrC0yR-s4yaM6d9d3vYrRcTcwQUOiA" />
+  <title>Tana Score</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='tana logo.png') }}">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZRCSWGT0BK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-ZRCSWGT0BK');
+  </script>
+</head>
+
+<body>
+
+  <!-- Liserés roses gauche -->
+  <div class="liseres left-1"></div>
+  <div class="liseres left-2"></div>
+  <div class="liseres left-3"></div>
+
+  <!-- Liserés roses droite -->
+  <div class="liseres right-1"></div>
+  <div class="liseres right-2"></div>
+  <div class="liseres right-3"></div>
+
+  <header class="page-header">
+    <img src="{{ url_for('static', filename='tana logo.png') }}" alt="Logo TANA" class="site-logo" />
+  </header>
+
+  <h2 style="color: #ff69b4; margin-top: 10px;">🔥 Mode Duo (Couple) 🔥</h2>
+
+  <form id="tanaForm" action="{{ url_for('submit_duo') }}" method="post">
+    <!-- Champ caché pour le temps de complétion -->
+    <input type="hidden" name="completion_time" id="completionTime">
+
+    <div class="question" id="q0" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Tu es un :</label>
+        <div class="radio-group">
+          <input type="radio" id="sexe_h" name="sexe" value="h" required>
+          <label for="sexe_h">Homme</label>
+          <input type="radio" id="sexe_f" name="sexe" value="f">
+          <label for="sexe_f">Femme</label>
+        </div>
+      </div>
+      <button type="button" class="open-field" onclick="checkAnswerAndNext(0)">Suivant</button>
+    </div>
+
+    <div class="question" id="q1" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Quel âge as-tu ?</label>
+        <input type="number" name="age" min="0" max="100" required>
+      </div>
+      <div class="button-group">
+      <button type="button" class="btn-back" onclick="showPrevious(1)">← Retour</button>
+      <button type="button" class="open-field" onclick="checkAnswerAndNext(1)">Suivant</button>
+    </div>
+    </div>
+
+    <div class="question" id="q2" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Âge de ta première fois (0 si jamais) :</label>
+        <input type="number" name="premier" min="0" required>
+      </div>
+      <div class="button-group">
+      <button type="button" class="btn-back" onclick="showPrevious(2)">← Retour</button>
+      <button type="button" class="open-field" onclick="checkAnswerAndNext(2)">Suivant</button>
+    </div>
+    </div>
+
+    <div class="question" id="q3" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Nombre de dates/flirts :</label>
+        <input type="number" name="date" min="0" required>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(3)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(3)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q4" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Nombre d'exs :</label>
+        <input type="number" name="ex" min="0" required>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(4)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(4)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q5" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Bodycount (laisser vide si jamais) :</label>
+        <input type="number" name="bodyc" min="0" id="bodycount">
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(5)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(5)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q6" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Score snap (au millier près) :</label>
+        <input type="number" name="score" min="0" required>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(6)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(6)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q7" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Abonnés Insta (au 10e près) :</label>
+        <input type="number" name="insta" min="0" required>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(7)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(7)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q8" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Abonnements Insta (au 10e près) :</label>
+        <input type="number" name="abo" min="0" required>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(8)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(8)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q9" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Tu préfères :</label>
+        <div class="radio-group">
+          <input type="radio" id="chien_c" name="chien" value="c" required>
+          <label for="chien_c">Chiens / Chiennes</label>
+          <input type="radio" id="chien_b" name="chien" value="b">
+          <label for="chien_b">Meufs / Gars bien</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(9)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(9)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q10" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Tu as plus d'ami·es :</label>
+        <div class="radio-group">
+          <input type="radio" id="ami_f" name="ami" value="f" required>
+          <label for="ami_f">Filles</label>
+          <input type="radio" id="ami_g" name="ami" value="g">
+          <label for="ami_g">Garçons</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(10)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(10)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q11" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Serais-tu prêt·e à baisser tes standards pour baiser ?</label>
+        <div class="radio-group">
+          <input type="radio" id="bz_o" name="bz" value="o" required>
+          <label for="bz_o">Oui</label>
+          <input type="radio" id="bz_n" name="bz" value="n">
+          <label for="bz_n">Non</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(11)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(11)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q12" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>As-tu déjà trompé ?</label>
+        <div class="radio-group">
+          <input type="radio" id="trompe_oui" name="trompe" value="oui" required>
+          <label for="trompe_oui">Oui</label>
+          <input type="radio" id="trompe_non" name="trompe" value="non">
+          <label for="trompe_non">Non</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(12)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(12)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q13" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>En as-tu tiré du plaisir ?</label>
+        <div class="radio-group">
+          <input type="radio" id="plaisir_oui" name="plaisir" value="oui" required>
+          <label for="plaisir_oui">Oui</label>
+          <input type="radio" id="plaisir_non" name="plaisir" value="non">
+          <label for="plaisir_non">Non</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(13)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(13)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q14" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Si c'était à refaire, le referais-tu ?</label>
+        <div class="radio-group">
+          <input type="radio" id="refaire_oui" name="refaire" value="oui" required>
+          <label for="refaire_oui">Oui</label>
+          <input type="radio" id="refaire_non" name="refaire" value="non">
+          <label for="refaire_non">Non</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(14)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(14)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q15" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Aimes-tu te maquiller ?</label>
+        <div class="radio-group">
+          <input type="radio" id="maquillage_full" name="maquillage" value="full">
+          <label for="maquillage_full">Full face</label>
+          <input type="radio" id="maquillage_fond" name="maquillage" value="fond">
+          <label for="maquillage_fond">Juste fond de teint</label>
+          <input type="radio" id="maquillage_eye" name="maquillage" value="eyeliner">
+          <label for="maquillage_eye">Eyeliner</label>
+          <input type="radio" id="maquillage_creme" name="maquillage" value="creme">
+          <label for="maquillage_creme">Juste crème solaire</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(15)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(15)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q16" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Pourrais-tu laisser tes potes pour avoir une relation ?</label>
+        <div class="radio-group">
+          <input type="radio" id="laisser_potes_oui_bien" name="laisser_potes" value="oui_bien">
+          <label for="laisser_potes_oui_bien">Oui bien sûr</label>
+          <input type="radio" id="laisser_potes_depend" name="laisser_potes" value="depend">
+          <label for="laisser_potes_depend">Oui ça dépend</label>
+          <input type="radio" id="laisser_potes_peut_etre" name="laisser_potes" value="peut_etre">
+          <label for="laisser_potes_peut_etre">Peut-être</label>
+          <input type="radio" id="laisser_potes_non_potes_dabord" name="laisser_potes" value="non_potes_dabord">
+          <label for="laisser_potes_non_potes_dabord">Non pas du tout</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(16)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(16)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q17" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Quel est l’âge de la personne la plus vieille avec qui tu as couché ?</label>
+        <input type="number" name="age_plus_vieux" min="0">
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(17)">← Retour</button>
+
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(17)">Suivant</button>
+
+      </div>
+    </div>
+
+    <div class="question" id="q18" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>As-tu déjà pensé à faire quelque chose avec ton demi-frère ou demi-sœur sans lien de parenté ?</label>
+        <div class="radio-group">
+          <input type="radio" id="demi_famille_oui" name="demi_famille" value="oui" required>
+          <label for="demi_famille_oui">Oui</label>
+          <input type="radio" id="demi_famille_non" name="demi_famille" value="non">
+          <label for="demi_famille_non">Non</label>
+        </div>
+      </div>
+      <div class="button-group">
+
+        <button type="button" class="btn-back" onclick="showPrevious(18)">← Retour</button>
+
+        <button type="submit" class="open-field">Envoyer</button>
+
+      </div>
+    </div>
+
+  </form>
+
+  <audio id="ding" src="{{ url_for('static', filename='ding.mp3') }}"></audio>
+
+  <script src="{{ url_for('static', filename='form_duo.js') }}"></script>
+</body>
+
+</html>

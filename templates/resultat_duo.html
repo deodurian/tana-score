@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tana Score Duo</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='tana logo.png') }}">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <header class="page-header">
+    <img src="{{ url_for('static', filename='tana logo.png') }}" alt="Logo TANA" class="site-logo" />
+  </header>
+  
+  <div id="result-block" class="fade-in" style="display: flex; flex-direction: column; align-items: center;">
+    <div class="result-card" style="max-width: 800px; width: 100%;">
+      <h1 style="font-size: 2.5rem; margin-bottom: 30px;">🔥 Le Match : Qui est la plus grosse Tana ? 🔥</h1>
+
+      <div style="display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+          
+          <!-- Joueur 1 -->
+          <div style="flex: 1; min-width: 250px; background: rgba(255, 105, 180, 0.1); padding: 20px; border-radius: 12px; {% if T1 > T2 %}border: 3px solid #ff69b4;{% endif %}">
+              <h2 style="color: #ff69b4; font-size: 2rem;">Toi</h2>
+              <p class="score-brut" style="font-size: 2.5rem; font-weight: bold;">{{ "%.2f" | format(T1) }}</p>
+              <p>Top Tana : {{ "%.2f" | format(pourcentage1) }} %</p>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center;">
+              <span style="font-size: 3rem; font-weight: bold; color: #555;">VS</span>
+          </div>
+
+          <!-- Joueur 2 -->
+          <div style="flex: 1; min-width: 250px; background: rgba(0, 122, 204, 0.1); padding: 20px; border-radius: 12px; {% if T2 > T1 %}border: 3px solid #007acc;{% endif %}">
+              <h2 style="color: #007acc; font-size: 2rem;">Partenaire</h2>
+              <p class="score-brut" style="font-size: 2.5rem; font-weight: bold;">{{ "%.2f" | format(T2) }}</p>
+              <p>Top Tana : {{ "%.2f" | format(pourcentage2) }} %</p>
+          </div>
+
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #333; border-radius: 12px;">
+          {% if T1 > T2 %}
+              <h2 style="color: #ff69b4; font-size: 1.8rem;">👑 C'est toi la plus grosse Tana !</h2>
+              <p style="font-size: 1.2rem; margin-top: 10px;">Tu as un score supérieur de {{ "%.2f" | format(T1 - T2) }} points.</p>
+          {% elif T2 > T1 %}
+              <h2 style="color: #007acc; font-size: 1.8rem;">👑 C'est ton/ta partenaire la plus grosse Tana !</h2>
+              <p style="font-size: 1.2rem; margin-top: 10px;">Il/Elle a un score supérieur de {{ "%.2f" | format(T2 - T1) }} points. Fais attention...</p>
+          {% else %}
+              <h2 style="color: #ffd43b; font-size: 1.8rem;">🤝 Match Nul !</h2>
+              <p style="font-size: 1.2rem; margin-top: 10px;">Vous êtes aussi Tana l'un que l'autre ! Vous vous êtes bien trouvés.</p>
+          {% endif %}
+      </div>
+
+      <div style="margin-top: 30px;">
+        <a class="back-link" href="/">↩ Revenir à l'accueil</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
