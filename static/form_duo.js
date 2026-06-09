@@ -179,27 +179,27 @@ function checkAnswerAndNext(i) {
   ];
 
   for (const container of containers) {
+    // On ne vérifie que si l'encadré du joueur est visible
     if (container && container.style.display !== 'none' && container.style.visibility !== 'hidden') {
-      const inputs = container.querySelectorAll('input[required]');
-      let containerValid = true;
-      if (inputs.length > 0) {
-        let hasRadio = false;
-        let radioChecked = false;
-        let textValid = true;
+      const inputs = container.querySelectorAll('input');
+      let containerHasAnswer = false;
+      let hasVisibleInputs = false;
 
-        for (const input of inputs) {
-          if (input.type === 'radio') {
-            hasRadio = true;
-            if (input.checked) radioChecked = true;
-          } else if ((input.type === 'text' || input.type === 'number')) {
-            if (input.value.trim() === '') textValid = false;
-          }
-        }
+      for (const input of inputs) {
+        if (input.type === 'hidden') continue;
+        hasVisibleInputs = true;
         
-        if (hasRadio && !radioChecked) containerValid = false;
-        if (!textValid) containerValid = false;
+        if ((input.type === 'radio' && input.checked) ||
+            ((input.type === 'text' || input.type === 'number') && input.value.trim() !== '')) {
+          containerHasAnswer = true;
+          break; // Dès qu'une réponse est donnée, c'est bon pour ce joueur
+        }
       }
-      if (!containerValid) valid = false;
+      
+      // Si le joueur a des champs à remplir mais n'a rien rempli
+      if (hasVisibleInputs && !containerHasAnswer) {
+        valid = false;
+      }
     }
   }
 
