@@ -197,7 +197,7 @@ def calculer_T(donnees):
     elif ex >= 1:
             T += 6.7 
     else:
-            T -= 0.3
+            T -= 0.3 
     
     if bz == "o":
             T *= 2.7
