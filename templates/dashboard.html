@@ -132,7 +132,9 @@
             <h1>📊 Dashboard TANA Score</h1>
             <p style="color: #aaa;">Statistiques en temps réel</p>
             <div style="margin-top: 20px;">
+                <a href="{{ url_for('dashboard_data') }}" style="background-color: #007acc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 10px;">🗄️ Gérer les données</a>
                 <a href="{{ url_for('dashboard_export') }}" style="background-color: #ff69b4; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 10px;">📥 Exporter (CSV)</a>
+                <a href="{{ url_for('dashboard_cleanup') }}" style="background-color: #ff9900; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 10px;" onclick="return confirm('Nettoyer les doublons (moins de 5min) ?');">🧹 Nettoyer les doublons</a>
                 <a href="{{ url_for('dashboard_recalculate') }}" style="background-color: #ff3333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 10px;" onclick="return confirm('Êtes-vous sûr de vouloir recalculer tous les scores ? Cela peut prendre quelques secondes.');">🔄 Recalculer tous les scores</a>
                 <a href="{{ url_for('dashboard_logout') }}" style="background-color: #444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold;">🚪 Déconnexion</a>
             </div>

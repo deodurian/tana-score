@@ -473,6 +473,52 @@ def dashboard_recalculate():
     except Exception as e:
         return f"<h1>Erreur</h1><p>{str(e)}</p><br><a href='/dashboard'>Retour au dashboard</a>"
 
+@app.route('/dashboard/cleanup')
+@login_required
+def dashboard_cleanup():
+    try:
+        deleted = database.nettoyer_doublons()
+        return f"<h1>Nettoyage Réussi</h1><p>{deleted} doublons (identiques à moins de 5 minutes d'intervalle) ont été supprimés.</p><br><a href='/dashboard'>Retour au dashboard</a>"
+    except Exception as e:
+        return f"<h1>Erreur</h1><p>{str(e)}</p><br><a href='/dashboard'>Retour au dashboard</a>"
+
+@app.route('/dashboard/data')
+@login_required
+def dashboard_data():
+    page = request.args.get('page', 1, type=int)
+    per_page = 50
+    try:
+        rows, total = database.get_paginated_submissions(page, per_page)
+        total_pages = (total + per_page - 1) // per_page
+        return render_template('data_management.html', rows=rows, page=page, total_pages=total_pages, total=total)
+    except Exception as e:
+        return f"<h1>Erreur</h1><p>{str(e)}</p><br><a href='/dashboard'>Retour au dashboard</a>"
+
+@app.route('/dashboard/data/delete/<int:id>', methods=['POST'])
+@login_required
+def dashboard_data_delete(id):
+    try:
+        database.delete_submission(id)
+        return redirect(url_for('dashboard_data'))
+    except Exception as e:
+        return f"<h1>Erreur</h1><p>{str(e)}</p><br><a href='/dashboard/data'>Retour aux données</a>"
+
+@app.route('/dashboard/data/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def dashboard_data_edit(id):
+    if request.method == 'POST':
+        raw_data = request.form.get('raw_data')
+        try:
+            database.update_submission_raw_data(id, raw_data)
+            return redirect(url_for('dashboard_data'))
+        except Exception as e:
+            return f"<h1>Erreur lors de la sauvegarde</h1><p>{str(e)}</p><br><a href='/dashboard/data'>Retour</a>"
+            
+    row = database.get_submission_by_id(id)
+    if not row:
+        return "Not found", 404
+    return render_template('data_edit.html', row=row)
+
 @app.route('/credit')
 def credit():
     return render_template('credit.html')

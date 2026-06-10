@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Données - TANA</title>
+    <style>
+        body { background-color: #1a1a1a; color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #2c2c2c; }
+        th, td { padding: 10px; border: 1px solid #444; text-align: left; }
+        th { background-color: #333; color: #ff69b4; }
+        .btn { padding: 5px 10px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; cursor: pointer; border: none; }
+        .btn-edit { background-color: #007acc; color: white; }
+        .btn-delete { background-color: #ff3333; color: white; }
+        .pagination { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        .pagination a { padding: 8px 12px; background-color: #444; color: white; text-decoration: none; border-radius: 5px; }
+        .pagination a.active { background-color: #ff69b4; }
+    </style>
+</head>
+<body>
+    <h1>🗄️ Gestion des Données (Total: {{ total }})</h1>
+    <a href="/dashboard" class="btn" style="background-color: #666; color: white; display: inline-block; margin-bottom: 20px;">↩ Retour au Dashboard</a>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Score T</th>
+                <th>Données Brutes (JSON)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.timestamp }}</td>
+                <td>{{ "%.2f"|format(row.score_t) if row.score_t else "N/A" }}</td>
+                <td style="font-size: 0.8rem; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ row.raw_data }}">{{ row.raw_data }}</td>
+                <td>
+                    <a href="{{ url_for('dashboard_data_edit', id=row.id) }}" class="btn btn-edit">Modifier</a>
+                    <form action="{{ url_for('dashboard_data_delete', id=row.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Supprimer définitivement cette entrée ?');">
+                        <button type="submit" class="btn btn-delete">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="?page={{ page - 1 }}">Précédent</a>
+        {% endif %}
+        
+        <span style="padding: 8px 12px; background-color: #ff69b4; border-radius: 5px;">Page {{ page }} / {{ total_pages }}</span>
+        
+        {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}">Suivant</a>
+        {% endif %}
+    </div>
+</body>
+</html>
