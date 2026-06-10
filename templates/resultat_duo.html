@@ -22,6 +22,16 @@
           <!-- Joueur 1 -->
           <div style="flex: 1; min-width: 250px; background: rgba(255, 105, 180, 0.1); padding: 20px; border-radius: 12px; {% if T1 > T2 %}border: 3px solid #ff69b4;{% endif %}">
               <h2 style="color: #ff69b4; font-size: 2rem;">Toi</h2>
+              {% if is_record_max_1 %}
+              <div style="background-color: #ffd700; color: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; font-size: 1.1rem;">
+                🎉 Record Absolu de la plus grosse Tana battu ! 🏆
+              </div>
+              {% endif %}
+              {% if is_record_min_1 %}
+              <div style="background-color: #00ffff; color: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; font-size: 1.1rem;">
+                😇 Record Absolu de pureté battu ! 🕊️
+              </div>
+              {% endif %}
               <p class="score-brut" style="font-size: 2.5rem; font-weight: bold;">{{ "%.2f" | format(T1) }}</p>
               <p>Top Tana : {{ "%.2f" | format(pourcentage1) }} %</p>
           </div>
@@ -33,6 +43,16 @@
           <!-- Joueur 2 -->
           <div style="flex: 1; min-width: 250px; background: rgba(0, 122, 204, 0.1); padding: 20px; border-radius: 12px; {% if T2 > T1 %}border: 3px solid #007acc;{% endif %}">
               <h2 style="color: #007acc; font-size: 2rem;">Partenaire</h2>
+              {% if is_record_max_2 %}
+              <div style="background-color: #ffd700; color: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; font-size: 1.1rem;">
+                🎉 Record Absolu de la plus grosse Tana battu ! 🏆
+              </div>
+              {% endif %}
+              {% if is_record_min_2 %}
+              <div style="background-color: #00ffff; color: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-weight: bold; animation: pulse 2s infinite; font-size: 1.1rem;">
+                😇 Record Absolu de pureté battu ! 🕊️
+              </div>
+              {% endif %}
               <p class="score-brut" style="font-size: 2.5rem; font-weight: bold;">{{ "%.2f" | format(T2) }}</p>
               <p>Top Tana : {{ "%.2f" | format(pourcentage2) }} %</p>
           </div>

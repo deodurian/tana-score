@@ -32,6 +32,11 @@ def load_user(user_id):
 # --- Initialisation SQLite ---
 with app.app_context():
     database.init_db()
+    try:
+        database.recalculate_all_scores()
+        print("Scores recalculés au démarrage avec succès.")
+    except Exception as e:
+        print(f"Erreur lors du recalcul des scores : {e}")
 
 # --- Validation des données ---
 def validate_form(form):
@@ -174,8 +179,13 @@ def submit():
     is_valid, error_message = validate_form(form)
     if not is_valid:
         return render_template('error.html', error=error_message), 400
+        
+    min_s, max_s = database.get_min_max_scores()
     
     t_score, pourcentage = calculer_T(dict(form))
+    
+    is_record_max = t_score > max_s and max_s != 0
+    is_record_min = t_score < min_s and min_s != 0
     
     # Enregistrement dans SQLite
     database.insert_submission(t_score, pourcentage, dict(form))
@@ -190,7 +200,9 @@ def submit():
                          pourcentage=pourcentage,
                          stats=stats,
                          distribution=database.get_distribution(),
-                         completion_time=completion_time)
+                         completion_time=completion_time,
+                         is_record_max=is_record_max,
+                         is_record_min=is_record_min)
 
 @app.route('/submit_duo', methods=['POST'])
 def submit_duo():
@@ -206,24 +218,40 @@ def submit_duo():
             form_p1[k] = v
             form_p2[k] = v
 
-    t_score1, pourcentage1 = calculer_T(form_p1)
-    t_score2, pourcentage2 = calculer_T(form_p2)
+    min_s, max_s = database.get_min_max_scores()
     
-    # Enregistrer les deux (les deux contribuent aux stats globales)
-    database.insert_submission(t_score1, pourcentage1, form_p1)
-    database.insert_submission(t_score2, pourcentage2, form_p2)
+    t_score_1, pourcentage_1 = calculer_T(form_p1)
+    t_score_2, pourcentage_2 = calculer_T(form_p2)
     
-    # Récupérer les stats globales
-    stats = database.get_stats_from_db()
+    is_record_max_1 = t_score_1 > max_s and max_s != 0
+    is_record_min_1 = t_score_1 < min_s and min_s != 0
+    
+    # Update max/min for player 2 comparison
+    current_max = max(max_s, t_score_1) if max_s != 0 else t_score_1
+    current_min = min(min_s, t_score_1) if min_s != 0 else t_score_1
+    
+    is_record_max_2 = t_score_2 > current_max and current_max != 0
+    is_record_min_2 = t_score_2 < current_min and current_min != 0
+    
+    database.insert_submission(t_score_1, pourcentage_1, form_p1)
+    database.insert_submission(t_score_2, pourcentage_2, form_p2)
+    
+    stats_1 = database.get_stats_from_db(user_score=t_score_1)
+    stats_2 = database.get_stats_from_db(user_score=t_score_2)
+    
+    diff = abs(t_score_1 - t_score_2)
+    pire_tana = 1 if t_score_1 > t_score_2 else 2 if t_score_2 > t_score_1 else 0
     
     completion_time = form.get('completion_time', 'N/A')
     
-    return render_template('resultat_duo.html', 
-                         T1=t_score1, pourcentage1=pourcentage1,
-                         T2=t_score2, pourcentage2=pourcentage2,
-                         stats=stats,
+    return render_template('resultat_duo.html',
+                         T1=t_score_1, pourcentage1=pourcentage_1, stats1=stats_1,
+                         T2=t_score_2, pourcentage2=pourcentage_2, stats2=stats_2,
+                         diff=diff, pire_tana=pire_tana,
                          distribution=database.get_distribution(),
-                         completion_time=completion_time)
+                         completion_time=completion_time,
+                         is_record_max_1=is_record_max_1, is_record_min_1=is_record_min_1,
+                         is_record_max_2=is_record_max_2, is_record_min_2=is_record_min_2)
 
 @app.route('/googlee76869bb6ba74b8b.html')
 def google_verify():
@@ -379,13 +407,16 @@ def dashboard():
         stats = database.get_stats_from_db()
         distribution = database.get_distribution()
         recent = database.get_recent_submissions(10)
+        min_s, max_s = database.get_min_max_scores()
         
         return render_template('dashboard.html', 
                              stats=stats, 
                              distribution=distribution,
                              recent=recent,
                              total_scores=stats['total'],
-                             total_entries=stats['total'])
+                             total_entries=stats['total'],
+                             min_score=min_s,
+                             max_score=max_s)
     except Exception as e:
         print(f"Erreur dashboard: {e}")
         return render_template('error.html', 
@@ -432,6 +463,15 @@ def dashboard_migrate():
         return f"<h1>Résultat de la migration</h1><p>{result}</p><br><a href='/dashboard'>Retour au dashboard</a>"
     except Exception as e:
         return f"<h1>Erreur</h1><p>{str(e)}</p>", 500
+
+@app.route('/dashboard/recalculate')
+@login_required
+def dashboard_recalculate():
+    try:
+        updated = database.recalculate_all_scores()
+        return f"<h1>Succès</h1><p>{updated} scores ont été recalculés et complétés.</p><br><a href='/dashboard'>Retour au dashboard</a>"
+    except Exception as e:
+        return f"<h1>Erreur</h1><p>{str(e)}</p><br><a href='/dashboard'>Retour au dashboard</a>"
 
 @app.route('/credit')
 def credit():

@@ -179,6 +179,13 @@ body {
 
 
 /* Groupes de boutons radio à la place des menus déroulants */
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
 .radio-group input[type="radio"] {
   display: none;
 }
@@ -197,13 +204,14 @@ body {
   /* permet au label de s'adapter au contenu */
   flex-grow: 0;
   /* empêche l'expansion dans un flex container */
-  width: auto !important;
-  max-width: 250px;
+  width: auto;
+  max-width: 300px;
   /* limite la largeur max */
-  white-space: nowrap;
-  /* empêche le retour à la ligne */
-  font-size: 1.8rem;
-  /* augmenter la taille de la police */
+  white-space: normal;
+  /* permet le retour à la ligne */
+  font-size: 1.5rem;
+  /* ajustement taille */
+  box-sizing: border-box;
 }
 
 .radio-group input[type="radio"]:checked+label {
@@ -541,9 +549,13 @@ form#tanaForm {
   margin-top: 20px;
 }
 
-.button-group .open-field,
-.button-group .btn-back {
+.button-group button.open-field,
+.button-group button.btn-back {
   flex: 1;
+  margin: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   /* Les deux boutons prennent la même largeur */
   min-width: 0;
   /* Permet au flex de fonctionner correctement */

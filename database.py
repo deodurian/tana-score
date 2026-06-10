@@ -191,7 +191,10 @@ def get_distribution():
     
     scores = [row['score_t'] for row in rows]
     distribution = {
-        '0-10': sum(1 for s in scores if s <= 10),
+        '< -30': sum(1 for s in scores if s < -30),
+        '-30 à -11': sum(1 for s in scores if -30 <= s <= -11),
+        '-10 à -1': sum(1 for s in scores if -10 <= s <= -1),
+        '0-10': sum(1 for s in scores if 0 <= s <= 10),
         '11-30': sum(1 for s in scores if 10 < s <= 30),
         '31-80': sum(1 for s in scores if 30 < s <= 80),
         '81-220': sum(1 for s in scores if 80 < s <= 220),
@@ -199,3 +202,53 @@ def get_distribution():
         '501+': sum(1 for s in scores if s > 500)
     }
     return distribution
+
+def get_min_max_scores():
+    conn = get_db_connection()
+    row = execute_query(conn, 'SELECT MIN(score_t) as min_s, MAX(score_t) as max_s FROM submissions', fetchone=True)
+    conn.close()
+    if not row or row['min_s'] is None:
+        return 0.0, 0.0
+    return float(row['min_s']), float(row['max_s'])
+
+def recalculate_all_scores():
+    import TANA_code
+    import json
+    conn = get_db_connection()
+    rows = execute_query(conn, 'SELECT id, raw_data FROM submissions', fetchall=True)
+    
+    updated_count = 0
+    for row in rows:
+        sub_id = row['id']
+        raw_data_str = row['raw_data']
+        try:
+            data = json.loads(raw_data_str)
+        except json.JSONDecodeError:
+            continue
+            
+        # Completion automatique pour les nouvelles questions
+        modified = False
+        defaults = {
+            'tel': 'jamais',
+            'temps_rep': 'direct',
+            'ghost': 'non',
+            'tinder': 'jamais',
+            'esquive': 'non'
+        }
+        for key, val in defaults.items():
+            if key not in data:
+                data[key] = val
+                modified = True
+                
+        raw_data_json = json.dumps(data) if modified else raw_data_str
+        
+        # Calculate new T score
+        t_score, pourcentage = TANA_code.calculer_T(data)
+        
+        execute_query(conn, 'UPDATE submissions SET score_t = ?, pourcentage = ?, raw_data = ? WHERE id = ?', 
+                      (t_score, pourcentage, raw_data_json, sub_id), commit=False)
+        updated_count += 1
+        
+    conn.commit()
+    conn.close()
+    return updated_count
