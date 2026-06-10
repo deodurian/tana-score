@@ -38,7 +38,7 @@ def validate_form(form):
     errors = []
     
     always_required = ['sexe', 'age', 'premier', 'date', 'ex', 'score', 'insta', 'abo', 
-                      'chien', 'ami', 'bz', 'demi_famille']
+                      'chien', 'ami', 'bz', 'demi_famille', 'tel', 'temps_rep', 'ghost', 'tinder', 'esquive']
     
     for field in always_required:
         if field not in form or form.get(field) == '':

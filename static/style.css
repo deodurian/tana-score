@@ -665,4 +665,58 @@ form#tanaForm {
   .open-field {
     order: 1;
   }
+
+  /* ====== Adaptations pour le Mode Duo sur mobile ====== */
+  .duo-wrapper {
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+
+  .player-container-1, .player-container-2 {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ====== Ajustement des tailles de texte et boutons sur mobile ====== */
+  .radio-group label {
+    font-size: 1.2rem;
+    padding: 12px 20px;
+    white-space: normal; /* Permet le retour à la ligne */
+    max-width: 100%;
+    width: 100% !important; /* Prend toute la largeur dispo */
+    box-sizing: border-box;
+  }
+
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* Ajuster les champs de saisie */
+  input[type="number"],
+  input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1.3rem;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .question label {
+    font-size: 1.3rem;
+  }
+
+  .page-header h1, .titre-principal {
+    font-size: 1.8rem;
+  }
+
+  .result-card h1 {
+    font-size: 2rem;
+  }
+
+  form#tanaForm {
+    padding: 10px;
+  }
 }

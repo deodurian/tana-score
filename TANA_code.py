@@ -58,6 +58,12 @@ def calculer_T(donnees):
     trompe = donnees.get("trompe", "non")  # oui/non
     plaisir = donnees.get("plaisir", "non")  # oui/non
     refaire = donnees.get("refaire", "non")  # oui/non
+
+    tel = donnees.get("tel", "jamais")
+    temps_rep = donnees.get("temps_rep", "direct")
+    ghost = donnees.get("ghost", "non")
+    tinder = donnees.get("tinder", "jamais")
+    esquive = donnees.get("esquive", "non")
     # date, ex, bodyc, score, insta, abo already converted above
     chien = donnees["chien"]
     ami = donnees["ami"]
@@ -201,7 +207,32 @@ def calculer_T(donnees):
     
     if bz == "o":
             T *= 2.7
-    
+
+    # --- Impact des 5 nouvelles questions ---
+    if tel == "oui":
+        T += 3 + 2*ex
+    elif tel == "arreter":
+        T += 1
+        
+    if temps_rep == "attendre":
+        T += 2
+    elif temps_rep == "fantome":
+        T += 5 + (ex / 2)
+        
+    if ghost == "merite":
+        T += 1
+    elif ghost == "lache":
+        T += 8 + bodyc
+        
+    if tinder == "regarder":
+        T += 4 + bodyc
+    elif tinder == "oui":
+        T += 10 + (bodyc ** 2)
+        
+    if esquive == "une_fois":
+        T += 1
+    elif esquive == "souvent":
+        T += 3 + (bodyc/2)
 
     def sigmoid_percent(T):
         if T <= 0:

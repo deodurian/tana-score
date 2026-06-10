@@ -348,9 +348,98 @@
       <div class="button-group">
 
         <button type="button" class="btn-back" onclick="showPrevious(18)">← Retour</button>
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(18)">Suivant</button>
+      </div>
+    </div>
 
+    <!-- NOUVELLES QUESTIONS -->
+    <div class="question" id="q19" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>As-tu déjà fouillé dans le téléphone de ton/ta partenaire ?</label>
+        <div class="radio-group">
+          <input type="radio" id="tel_non" name="tel" value="jamais" required>
+          <label for="tel_non">Jamais</label>
+          <input type="radio" id="tel_arreter" name="tel" value="arreter">
+          <label for="tel_arreter">Oui mais je me suis arrêté(e) avant</label>
+          <input type="radio" id="tel_oui" name="tel" value="oui">
+          <label for="tel_oui">Oui</label>
+        </div>
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn-back" onclick="showPrevious(19)">← Retour</button>
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(19)">Suivant</button>
+      </div>
+    </div>
+
+    <div class="question" id="q20" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>Quand quelqu'un te plaît, combien de temps mets-tu à répondre à ses messages ?</label>
+        <div class="radio-group">
+          <input type="radio" id="temps_direct" name="temps_rep" value="direct" required>
+          <label for="temps_direct">Dans la seconde</label>
+          <input type="radio" id="temps_attendre" name="temps_rep" value="attendre">
+          <label for="temps_attendre">J'attends un peu pour faire genre</label>
+          <input type="radio" id="temps_fantome" name="temps_rep" value="fantome">
+          <label for="temps_fantome">Je ghoste la moitié du temps</label>
+        </div>
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn-back" onclick="showPrevious(20)">← Retour</button>
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(20)">Suivant</button>
+      </div>
+    </div>
+
+    <div class="question" id="q21" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>As-tu déjà ghosté quelqu'un du jour au lendemain sans explication ?</label>
+        <div class="radio-group">
+          <input type="radio" id="ghost_jamais" name="ghost" value="non" required>
+          <label for="ghost_jamais">Jamais de la vie</label>
+          <input type="radio" id="ghost_merite" name="ghost" value="merite">
+          <label for="ghost_merite">Oui, mais il/elle l'avait cherché</label>
+          <input type="radio" id="ghost_oui" name="ghost" value="lache">
+          <label for="ghost_oui">Oui, j'assume</label>
+        </div>
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn-back" onclick="showPrevious(21)">← Retour</button>
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(21)">Suivant</button>
+      </div>
+    </div>
+
+    <div class="question" id="q22" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>As-tu déjà gardé Tinder/Bumble sur ton tel alors que tu fréquentais quelqu'un sérieusement ?</label>
+        <div class="radio-group">
+          <input type="radio" id="tinder_non" name="tinder" value="jamais" required>
+          <label for="tinder_non">Non, je supprime tout</label>
+          <input type="radio" id="tinder_regarder" name="tinder" value="regarder">
+          <label for="tinder_regarder">Oui, mais "juste pour regarder"</label>
+          <input type="radio" id="tinder_oui" name="tinder" value="oui">
+          <label for="tinder_oui">Oui</label>
+        </div>
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn-back" onclick="showPrevious(22)">← Retour</button>
+        <button type="button" class="open-field" onclick="checkAnswerAndNext(22)">Suivant</button>
+      </div>
+    </div>
+
+    <div class="question" id="q23" style="display:flex; flex-direction: column; gap: 1em;">
+      <div class="content-question">
+        <label>As-tu déjà fait semblant de dormir ou d'être malade pour éviter de voir quelqu'un ?</label>
+        <div class="radio-group">
+          <input type="radio" id="esquive_jamais" name="esquive" value="non" required>
+          <label for="esquive_jamais">Jamais, je suis honnête</label>
+          <input type="radio" id="esquive_fois" name="esquive" value="une_fois">
+          <label for="esquive_fois">Une fois ou deux</label>
+          <input type="radio" id="esquive_souvent" name="esquive" value="souvent">
+          <label for="esquive_souvent">C'est mon excuse préférée</label>
+        </div>
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn-back" onclick="showPrevious(23)">← Retour</button>
         <button type="submit" class="open-field">Envoyer</button>
-
       </div>
     </div>
 

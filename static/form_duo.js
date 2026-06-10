@@ -115,7 +115,7 @@ function showNext(i) {
     
     navigationHistory.push(nextIndex);
   } else {
-    const resultsQuestion = document.getElementById('q18');
+    const resultsQuestion = document.getElementById('q23');
     if (resultsQuestion) {
       questions[i].classList.add('slide-out-left');
       setTimeout(() => {
@@ -207,6 +207,29 @@ function checkAnswerAndNext(i) {
     alert('Les deux joueurs doivent répondre avant de passer à la question suivante.');
     return;
   }
+
+  // Vérification de l'âge (Question 1)
+  if (i === 1) {
+    let ageValid = true;
+    for (const container of containers) {
+      if (container && container.style.display !== 'none' && container.style.visibility !== 'hidden') {
+        const inputs = container.querySelectorAll('input');
+        for (const input of inputs) {
+          if (input.type === 'number' && input.name.startsWith('age')) {
+            const ageVal = parseInt(input.value);
+            if (ageVal < 13 || ageVal > 100) {
+              ageValid = false;
+            }
+          }
+        }
+      }
+    }
+    if (!ageValid) {
+      alert("Désolé, les deux joueurs doivent avoir au moins 13 ans pour faire ce test.");
+      return;
+    }
+  }
+
   playAndNext(i);
 }
 

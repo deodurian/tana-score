@@ -47,7 +47,7 @@ function showNext(i) {
     navigationHistory.push(nextIndex); // Ajouter à l'historique
   } else {
     // Affiche explicitement la page résultats
-    const resultsQuestion = document.getElementById('q18');
+    const resultsQuestion = document.getElementById('q23');
     if (resultsQuestion) {
       questions[i].classList.add('slide-out-left');
       setTimeout(() => {
@@ -124,6 +124,24 @@ function checkAnswerAndNext(i) {
     alert('Merci de répondre avant de passer à la question suivante.');
     return;
   }
+
+  // Vérification de l'âge (Question 1)
+  if (i === 1) {
+    let ageValid = true;
+    for (const input of inputs) {
+      if (input.type === 'number' && input.name === 'age') {
+        const ageVal = parseInt(input.value);
+        if (ageVal < 13 || ageVal > 100) {
+          ageValid = false;
+        }
+      }
+    }
+    if (!ageValid) {
+      alert("Désolé, tu dois avoir au moins 13 ans pour faire ce test.");
+      return;
+    }
+  }
+
   playAndNext(i);
 }
 
@@ -139,7 +157,7 @@ function checkConditionalQuestions() {
     document.getElementById('q13'),
     document.getElementById('q14')
   ];
-  const resultsQuestion = document.getElementById('q18');
+  const resultsQuestion = document.getElementById('q23');
 
   if (!maquillageQuestion || !bodycountQuestion || !agePlusVieuxQuestion || !premierInput || !resultsQuestion) {
     console.warn('Un ou plusieurs éléments manquent dans le DOM.');
