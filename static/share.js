@@ -2,25 +2,64 @@
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 /**
- * Génère l'URL de l'image de partage
+ * Télécharge l'image et retourne un Blob via html2canvas
  */
-function getShareImageUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const T = document.querySelector('[name="T"]')?.value || urlParams.get('T') || '0';
-    const pourcentage = document.querySelector('[name="pourcentage"]')?.value || urlParams.get('pourcentage') || '0';
-    const percentile = document.querySelector('[name="percentile"]')?.value || urlParams.get('percentile') || '0';
+async function downloadImageAsBlob() {
+    let card = document.getElementById('share-card');
+    if (!card) {
+        card = document.getElementById('share-card-duo');
+    }
+    
+    if (!card) {
+        throw new Error("Share card introuvable sur la page.");
+    }
 
-    return `/telecharger_image?T=${T}&pourcentage=${pourcentage}&percentile=${percentile}`;
+    // Afficher temporairement la carte pour html2canvas
+    const originalLeft = card.style.left;
+    card.style.left = '0px';
+    card.style.zIndex = '-9999';
+
+    try {
+        const canvas = await html2canvas(card, {
+            scale: 1, // On est déjà en 1080x1920
+            useCORS: true,
+            backgroundColor: null
+        });
+
+        return new Promise(resolve => {
+            canvas.toBlob(blob => {
+                resolve(blob);
+            }, 'image/png');
+        });
+    } finally {
+        // Cacher à nouveau
+        card.style.left = originalLeft;
+    }
 }
 
 /**
- * Télécharge l'image et retourne un Blob
+ * Fonction appelée par le bouton "Télécharger"
  */
-async function downloadImageAsBlob() {
-    const imageUrl = getShareImageUrl();
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    return blob;
+async function downloadImage() {
+    try {
+        // Afficher un petit indicateur de chargement si besoin
+        document.body.style.cursor = 'wait';
+        
+        const blob = await downloadImageAsBlob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mon_score_tana.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Erreur lors du téléchargement:', error);
+        alert("Erreur lors du téléchargement de l'image.");
+    } finally {
+        document.body.style.cursor = 'default';
+    }
 }
 
 /**

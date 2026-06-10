@@ -118,11 +118,10 @@
         <span class="text">Twitter</span>
       </button>
 
-      <a href="{{ url_for('telecharger_image') }}?T={{ T }}&pourcentage={{ pourcentage }}&percentile={{ stats.percentile if stats else 0 }}"
-        download class="btn-share download">
+      <button onclick="downloadImage()" class="btn-share download">
         <span class="emoji">📥</span>
         <span class="text">Télécharger</span>
-      </a>
+      </button>
     </div>
 
     <p style="margin-top: 15px; color: #aaa; font-size: 0.9rem;">
@@ -205,6 +204,46 @@
     });
   </script>
   {% endif %}
-</body>
 
+  <!-- CARTE DE PARTAGE INVISIBLE (POUR INSTAGRAM / DOWNLOAD) -->
+  <div id="share-card" style="width: 1080px; height: 1920px; position: fixed; top: 0; left: -9999px; background-image: url('{{ url_for('static', filename='image fond.png') }}'); background-size: cover; background-position: center; font-family: 'Inter', sans-serif; text-align: center; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; padding: 100px;">
+    <!-- Voile sombre pour le contraste -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(20,20,20,0.6), rgba(0,0,0,0.9)); z-index: 1;"></div>
+    
+    <div style="position: relative; z-index: 2; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+        <!-- HAUT -->
+        <div style="margin-top: 50px;">
+            <img src="{{ url_for('static', filename='tana logo chrome rose.webp') }}" style="width: 450px; margin-bottom: 40px; filter: drop-shadow(0px 15px 30px rgba(0,0,0,0.6));">
+            <h1 style="font-size: 6rem; margin: 0; text-transform: uppercase; font-weight: 900; letter-spacing: 8px; color: #fff; text-shadow: 0 8px 20px rgba(255, 105, 180, 0.8);">MON SCORE TANA</h1>
+        </div>
+
+        <!-- MILIEU -->
+        <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 100px 50px; border-radius: 50px; border: 3px solid rgba(255, 105, 180, 0.4); width: 85%; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <p style="font-size: 3.5rem; color: #ff69b4; text-transform: uppercase; letter-spacing: 4px; margin: 0; font-weight: bold;">Score Brut</p>
+            <div style="font-size: 14rem; font-weight: 900; margin: 30px 0; text-shadow: 0 15px 40px rgba(255, 105, 180, 0.4);">{{ "%.2f" | format(T) if T is not none else "0" }}</div>
+            
+            <div style="background: rgba(255,105,180,0.2); padding: 20px 40px; border-radius: 30px; display: inline-block;">
+                <p style="font-size: 4rem; color: #fff; margin: 0; font-weight: bold;">🔥 Top {{ "%.2f" | format(pourcentage) if pourcentage is not none else "0" }} % 🔥</p>
+            </div>
+        </div>
+
+        <!-- BAS -->
+        <div style="margin-bottom: 50px;">
+            {% if T is not none %}
+                {% if T <= 10 %} <h2 style="font-size: 4rem; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.3;">Bravo à toi,<br>tu n'es pas une tana. 😇</h2>
+                {% elif T <= 30 %} <h2 style="font-size: 4rem; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.3;">Aïe… tu n'es pas une tana,<br>mais tu aimes t’amuser. 😏</h2>
+                {% elif T <= 80 %} <h2 style="font-size: 4rem; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.3;">Oula, une tana timide,<br>mais une tana quand même. 🤫</h2>
+                {% elif T <= 220 %} <h2 style="font-size: 4rem; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.3;">Une tana moyenne. 💅</h2>
+                {% elif T <= 500 %} <h2 style="font-size: 4rem; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.3;">On rentre dans une catégorie<br>qui nous dépasse. 😳</h2>
+                {% elif T <= 1000 %} <h2 style="font-size: 4rem; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.3;">Tu vis pour t’amuser.<br>Une vie de péché. 😈</h2>
+                {% else %} <h2 style="font-size: 4rem; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.3;">On a dépassé les limites humaines…<br>consulte un psy 😅</h2>
+                {% endif %}
+            {% endif %}
+            
+            <div style="margin-top: 80px; font-size: 2.5rem; color: #ff69b4; font-weight: bold; letter-spacing: 2px;">tana-score.fr</div>
+        </div>
+    </div>
+  </div>
+
+</body>
 </html>

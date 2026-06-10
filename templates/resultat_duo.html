@@ -72,9 +72,70 @@
           {% endif %}
       </div>
 
+      <div class="share-buttons" style="margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+          <button onclick="shareToInstagram()" class="btn-share instagram">
+            <span class="emoji">📸</span>
+            <span class="text">Instagram</span>
+          </button>
+          <button onclick="shareToTwitter()" class="btn-share twitter">
+            <span class="emoji">🐦</span>
+            <span class="text">Twitter</span>
+          </button>
+          <button onclick="downloadImage()" class="btn-share download">
+            <span class="emoji">📥</span>
+            <span class="text">Télécharger</span>
+          </button>
+      </div>
+
       <div style="margin-top: 30px;">
         <a class="back-link" href="/">↩ Revenir à l'accueil</a>
       </div>
+      <script src="{{ url_for('static', filename='share.js') }}"></script>
+    </div>
+  </div>
+  </div>
+
+  <!-- CARTE DE PARTAGE INVISIBLE DUO -->
+  <div id="share-card-duo" style="width: 1080px; height: 1920px; position: fixed; top: 0; left: -9999px; background-image: url('{{ url_for('static', filename='image fond.png') }}'); background-size: cover; background-position: center; font-family: 'Inter', sans-serif; text-align: center; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; padding: 100px;">
+    <!-- Voile sombre pour le contraste -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(20,20,20,0.6), rgba(0,0,0,0.9)); z-index: 1;"></div>
+    
+    <div style="position: relative; z-index: 2; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+        
+        <div style="margin-top: 30px;">
+            <img src="{{ url_for('static', filename='tana logo chrome rose.webp') }}" style="width: 350px; margin-bottom: 30px; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.6));">
+            <h1 style="font-size: 5rem; margin: 0; text-transform: uppercase; font-weight: 900; letter-spacing: 5px; color: #fff; text-shadow: 0 8px 20px rgba(255, 105, 180, 0.8);">LE MATCH TANA</h1>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; width: 100%; padding: 0 20px;">
+            <!-- Joueur 1 -->
+            <div style="background: rgba(255, 105, 180, 0.1); backdrop-filter: blur(15px); padding: 50px 30px; border-radius: 40px; border: 4px solid {% if T1 > T2 %}#ff69b4{% else %}rgba(255, 105, 180, 0.3){% endif %}; width: 45%; box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
+                <h2 style="font-size: 3.5rem; color: #ff69b4; margin: 0;">Toi</h2>
+                <div style="font-size: 8rem; font-weight: 900; margin: 20px 0; text-shadow: 0 10px 30px rgba(255, 105, 180, 0.4);">{{ "%.2f" | format(T1) }}</div>
+                <div style="background: rgba(255,105,180,0.2); padding: 15px; border-radius: 20px;"><p style="font-size: 2rem; color: #fff; margin: 0; font-weight: bold;">Top {{ "%.2f" | format(pourcentage1) }} %</p></div>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: center; font-size: 5rem; font-weight: bold; color: #fff; text-shadow: 0 5px 15px rgba(0,0,0,0.8);">VS</div>
+
+            <!-- Joueur 2 -->
+            <div style="background: rgba(0, 122, 204, 0.1); backdrop-filter: blur(15px); padding: 50px 30px; border-radius: 40px; border: 4px solid {% if T2 > T1 %}#007acc{% else %}rgba(0, 122, 204, 0.3){% endif %}; width: 45%; box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
+                <h2 style="font-size: 3.5rem; color: #007acc; margin: 0;">Ami(e)</h2>
+                <div style="font-size: 8rem; font-weight: 900; margin: 20px 0; text-shadow: 0 10px 30px rgba(0, 122, 204, 0.4);">{{ "%.2f" | format(T2) }}</div>
+                <div style="background: rgba(0, 122, 204, 0.2); padding: 15px; border-radius: 20px;"><p style="font-size: 2rem; color: #fff; margin: 0; font-weight: bold;">Top {{ "%.2f" | format(pourcentage2) }} %</p></div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 40px;">
+            {% if T1 > T2 %}
+                <h2 style="font-size: 4rem; color: #ff69b4; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8);">👑 C'est toi la plus grosse Tana !</h2>
+            {% elif T2 > T1 %}
+                <h2 style="font-size: 4rem; color: #007acc; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8);">👑 C'est ton/ta partenaire !</h2>
+            {% else %}
+                <h2 style="font-size: 4rem; color: #ffd43b; margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.8);">🤝 Match Nul ! Vous êtes pareils.</h2>
+            {% endif %}
+            
+            <div style="margin-top: 60px; font-size: 2.5rem; color: #aaa; font-weight: bold; letter-spacing: 2px;">tana-score.fr</div>
+        </div>
     </div>
   </div>
 </body>
