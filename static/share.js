@@ -14,16 +14,21 @@ async function downloadImageAsBlob() {
         throw new Error("Share card introuvable sur la page.");
     }
 
-    // Afficher temporairement la carte pour html2canvas
-    const originalLeft = card.style.left;
-    card.style.left = '0px';
-    card.style.zIndex = '-9999';
-
     try {
         const canvas = await html2canvas(card, {
             scale: 1, // On est déjà en 1080x1920
             useCORS: true,
-            backgroundColor: null
+            backgroundColor: null,
+            onclone: (clonedDoc) => {
+                const clonedCard = clonedDoc.getElementById(card.id);
+                if (clonedCard) {
+                    // On le rend visible et on le positionne bien uniquement dans le clone (invisible pour l'utilisateur)
+                    clonedCard.style.display = 'flex';
+                    clonedCard.style.position = 'absolute';
+                    clonedCard.style.left = '0';
+                    clonedCard.style.top = '0';
+                }
+            }
         });
 
         return new Promise(resolve => {
@@ -31,9 +36,9 @@ async function downloadImageAsBlob() {
                 resolve(blob);
             }, 'image/png');
         });
-    } finally {
-        // Cacher à nouveau
-        card.style.left = originalLeft;
+    } catch (e) {
+        console.error("Erreur html2canvas:", e);
+        throw e;
     }
 }
 
