@@ -329,7 +329,38 @@ function attachListeners() {
     listenersAttached = true;
 }
 
+// Sauvegarde locale (Anti-Seum)
+function saveProgress() {
+  const form = document.getElementById('tanaForm');
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+  localStorage.setItem('tana_answers_duo', JSON.stringify(data));
+}
+
+function restoreProgress() {
+  const savedData = localStorage.getItem('tana_answers_duo');
+  if (savedData) {
+    try {
+      const data = JSON.parse(savedData);
+      Object.keys(data).forEach(key => {
+        const input = document.querySelector(`[name="${key}"][value="${data[key]}"]`) || 
+                      document.querySelector(`input[type="number"][name="${key}"]`);
+        if (input) {
+          if (input.type === 'radio') input.checked = true;
+          else input.value = data[key];
+        }
+      });
+    } catch(e) {}
+  }
+}
+
+document.querySelectorAll('input').forEach(input => {
+  input.addEventListener('change', saveProgress);
+  input.addEventListener('input', saveProgress);
+});
+
 window.onload = () => {
+  restoreProgress();
   document.querySelectorAll('input[required]').forEach(i => i.setAttribute('data-was-required', 'true'));
   checkConditionalQuestions();
   attachListeners();
@@ -337,6 +368,12 @@ window.onload = () => {
 };
 
 document.getElementById('tanaForm').addEventListener('submit', function (e) {
+  if (!navigator.onLine) {
+    e.preventDefault();
+    alert("Oups, tu n'as pas de connexion internet ! Pas de panique, tes réponses sont sauvegardées. Clique sur Envoyer quand le réseau reviendra.");
+    return;
+  }
+
   const submitBtn = this.querySelector('button[type="submit"]');
   if (submitBtn) {
     submitBtn.disabled = true;

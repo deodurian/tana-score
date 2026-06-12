@@ -313,8 +313,48 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
+// Sauvegarde locale (Anti-Seum)
+function saveProgress() {
+  const form = document.getElementById('tanaForm');
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+  localStorage.setItem('tana_answers_solo', JSON.stringify(data));
+}
+
+function restoreProgress() {
+  const savedData = localStorage.getItem('tana_answers_solo');
+  if (savedData) {
+    try {
+      const data = JSON.parse(savedData);
+      Object.keys(data).forEach(key => {
+        const input = document.querySelector(`[name="${key}"][value="${data[key]}"]`) || 
+                      document.querySelector(`input[type="number"][name="${key}"]`);
+        if (input) {
+          if (input.type === 'radio') input.checked = true;
+          else input.value = data[key];
+        }
+      });
+      // Optionally advance to the first unanswered question
+    } catch(e) {}
+  }
+}
+
+document.querySelectorAll('input').forEach(input => {
+  input.addEventListener('change', saveProgress);
+  input.addEventListener('input', saveProgress);
+});
+
+// Restaurer au chargement
+document.addEventListener('DOMContentLoaded', restoreProgress);
+
 // Calculer et injecter le temps de complétion lors de la soumission
 document.getElementById('tanaForm').addEventListener('submit', function (e) {
+  if (!navigator.onLine) {
+    e.preventDefault();
+    alert("Oups, tu n'as pas de connexion internet ! Pas de panique, tes réponses sont sauvegardées. Clique sur Envoyer quand le réseau reviendra.");
+    return;
+  }
+
   // Désactiver le bouton d'envoi pour éviter les clics multiples
   const submitBtn = this.querySelector('button[type="submit"]');
   if (submitBtn) {

@@ -254,47 +254,21 @@ def recalculate_all_scores():
     return updated_count
 
 def nettoyer_doublons():
-    from datetime import datetime, timedelta
     conn = get_db_connection()
-    rows = execute_query(conn, 'SELECT id, timestamp, raw_data FROM submissions ORDER BY timestamp ASC', fetchall=True)
+    # On trie par id ou timestamp pour garder le plus ancien
+    rows = execute_query(conn, 'SELECT id, timestamp, raw_data FROM submissions ORDER BY id ASC', fetchall=True)
     
-    seen = []  # List of tuples: (raw_data, timestamp)
+    seen = set()
     ids_to_delete = []
     
     for row in rows:
         row_id = row['id']
         raw_data = row['raw_data']
-        ts = row['timestamp']
         
-        # Convert timestamp to datetime if it's a string
-        if isinstance(ts, str):
-            try:
-                ts = datetime.strptime(ts.split('.')[0], '%Y-%m-%d %H:%M:%S')
-            except Exception:
-                # If parsing fails, we keep the record to be safe
-                pass
-                
-        is_duplicate = False
-        
-        if isinstance(ts, datetime):
-            # Check backwards in seen list
-            for seen_data, seen_ts in reversed(seen):
-                if not isinstance(seen_ts, datetime):
-                    continue
-                    
-                time_diff = ts - seen_ts
-                if time_diff > timedelta(minutes=5):
-                    # List is ordered, so anything before is > 5 mins
-                    break
-                    
-                if raw_data == seen_data:
-                    is_duplicate = True
-                    break
-                    
-        if is_duplicate:
+        if raw_data in seen:
             ids_to_delete.append(row_id)
         else:
-            seen.append((raw_data, ts))
+            seen.add(raw_data)
             
     if ids_to_delete:
         chunk_size = 500

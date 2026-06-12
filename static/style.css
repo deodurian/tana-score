@@ -45,12 +45,21 @@
 }
 
 body {
-  background-size: auto;
+  background: linear-gradient(-45deg, #1c1c1c, #2b0b1a, #1a001a, #0d0d2b);
+  background-size: 400% 400%;
+  animation: gradientBackground 15s ease infinite;
   color: #f0f0f0;
   font-family: Arial, sans-serif;
   text-align: center;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+}
+
+@keyframes gradientBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 
@@ -137,9 +146,7 @@ input[type="submit"] {
 }
 
 
-body {
-  background-color: #1c1c1c;
-}
+
 
 .liseres {
   position: fixed;
